@@ -31,6 +31,12 @@
             --button-border-color: #0FF;
             --button-hover-bg-color: #066;
 
+            /* Input Variables */
+            --input-text-color: #FFF;
+            --input-bg-color: #011;
+            --input-border-color: #0FF;
+            --input-placeholder-text-color: #999;
+
             /* Safety Result Colors */
             --safety-excellent: #42A5F5;
             --safety-safe: #44FF44;
@@ -342,12 +348,17 @@
         }
 
         input, select, textarea {
-            background-color: var(--input-bg);
-            color: var(--text-color);
-            border: 1px solid #066;
+            background-color: var(--input-bg-color);
+            color: var(--input-text-color);
+            border: 1px solid var(--input-border-color);
             padding: 8px;
             border-radius: 4px;
             font-family: inherit;
+        }
+
+        input::placeholder, textarea::placeholder {
+            color: var(--input-placeholder-text-color);
+            opacity: 1;
         }
 
         input:focus, select:focus, textarea:focus {
@@ -404,9 +415,13 @@
             margin-top: 4px;
             text-align: left;
             line-height: 1.2;
+            display: -webkit-box;
+            -webkit-line-clamp: 1;
+            -webkit-box-orient: vertical;
         }
         .notes-container.expanded {
             max-height: 1000px; /* High enough to accommodate content */
+            -webkit-line-clamp: unset;
         }
         .toggle-notes {
             color: var(--highlight);
