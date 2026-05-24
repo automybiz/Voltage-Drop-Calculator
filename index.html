@@ -744,9 +744,9 @@
             const container = document.getElementById(id);
             container.classList.toggle('expanded');
             if (container.classList.contains('expanded')) {
-                btn.innerHTML = 'less&nbsp;info';
+                btn.innerHTML = 'less'; // Use &nbsp; to prevent underline from breaking into two lines
             } else {
-                btn.innerHTML = 'more&nbsp;info';
+                btn.innerHTML = 'more'; // Use &nbsp; to prevent underline from breaking into two lines
             }
         }
 
@@ -1268,7 +1268,7 @@
                                 <div id="${notesId}" class="notes-container">
                                     ${prod.notes.replace(/\n/g, "<br>")}
                                 </div>
-                                <span class="toggle-notes" onclick="toggleNotes('${notesId}', this)">more&nbsp;info</span>
+                                <span class="toggle-notes" onclick="toggleNotes('${notesId}', this)">more</span>
                             </div>
                         `;
                     }
