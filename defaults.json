@@ -129,6 +129,8 @@
       "visible": true
     }
   ],
+  "sourceVoltage": 120,
+  "outletAmperage": 15,
   "version": "1.0",
-  "exportDate": "2026-05-24T10:34:57.414Z"
+  "exportDate": "2026-05-24T11:15:00.000Z"
 }

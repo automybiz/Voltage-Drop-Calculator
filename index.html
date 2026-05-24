@@ -139,7 +139,9 @@
             color: var(--highlight);
             font-weight: bold;
             margin-bottom: 10px;
-            display: block;
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
 
         .visibility-grid {
@@ -241,6 +243,11 @@
             border-bottom: 1px solid #044;
             padding: 12px 8px;
             text-align: center;
+            white-space: nowrap;
+        }
+
+        .product-name-cell {
+            white-space: normal !important;
         }
 
         th {
@@ -387,6 +394,31 @@
             font-size: 0.9em;
         }
 
+        /* Collapsible Notes */
+        .notes-container {
+            max-height: 1.2em;
+            overflow: hidden;
+            transition: max-height 0.3s ease-in-out;
+            font-size: 0.75em;
+            color: #aaa;
+            margin-top: 4px;
+            text-align: left;
+            line-height: 1.2;
+        }
+        .notes-container.expanded {
+            max-height: 1000px; /* High enough to accommodate content */
+        }
+        .toggle-notes {
+            color: var(--highlight);
+            cursor: pointer;
+            font-size: 0.7em;
+            text-decoration: underline;
+            display: inline-block;
+            margin-top: 2px;
+            user-select: none;
+            white-space: nowrap;
+        }
+
     </style>
 </head>
 <body>
@@ -402,6 +434,7 @@
             </div>
             <div id="settings-content" class="accordion-content">
                 <div class="import-export-container">
+                    <button class="btn btn-edit" onclick="loadDefaultData()">Load Default Data</button>
                     <button class="btn btn-edit" onclick="exportData()">Export Data</button>
                     <button class="btn btn-edit" onclick="importData()">Import Data</button>
                     <input type="file" id="import-file" style="display:none" onchange="handleImport(event)">
@@ -409,26 +442,25 @@
                 <div class="settings-grid">
                     <div class="setting-item">
                         <label>Source Voltage (V)</label>
-                        <input type="number" id="source-voltage" value="120" step="1" onchange="renderTable()">
+                        <input type="number" id="source-voltage" value="120" step="1" onchange="saveAndRender()">
                     </div>
                     <div class="setting-item">
                         <label>Outlet Amperage (A)</label>
-                        <select id="outlet-amps" onchange="renderTable()">
+                        <select id="outlet-amps" onchange="saveAndRender()">
                             <option value="15">15 Amps</option>
                             <option value="20">20 Amps</option>
                         </select>
                     </div>
                 </div>
 
-                <div class="button-group">
-                    <button class="btn btn-add" onclick="openProductModal()">+ Add New Product</button>
-                    <button class="btn btn-add" onclick="openCordModal()">+ Add New Cord Combo</button>
-                </div>
-
                 <div class="visibility-split-container">
                     <!-- Cord Management -->
                     <div class="visibility-controls">
-                        <span class="visibility-header">Visible Cord Combos:</span>
+                        <span class="visibility-header">
+                            Visible Cord Combos:
+                            <button class="btn btn-add" style="padding: 2px 6px; font-size: 0.7em;" onclick="openCordModal()">+ Add</button>
+                            <button class="btn btn-delete" style="padding: 2px 6px; font-size: 0.7em;" onclick="deleteAllCords()">Delete All</button>
+                        </span>
                         <div id="cord-toggles" class="visibility-grid">
                             <!-- Checkboxes injected by JS -->
                         </div>
@@ -436,7 +468,11 @@
 
                     <!-- Product Management -->
                     <div class="visibility-controls">
-                        <span class="visibility-header">Visible Products:</span>
+                        <span class="visibility-header">
+                            Visible Products:
+                            <button class="btn btn-add" style="padding: 2px 6px; font-size: 0.7em;" onclick="openProductModal()">+ Add</button>
+                            <button class="btn btn-delete" style="padding: 2px 6px; font-size: 0.7em;" onclick="deleteAllProducts()">Delete All</button>
+                        </span>
                         <div id="product-toggles" class="visibility-grid">
                             <!-- Checkboxes injected by JS -->
                         </div>
@@ -538,17 +574,140 @@
         // State Management
         let draggedItem = null;
 
-        let products = JSON.parse(localStorage.getItem('vd_products')) || [
-            { id: 1, name: 'Insignia (~6k)', amps: 10, watts: 1200, visible: true },
-            { id: 2, name: 'Midea Duo 12,000', amps: 10.4, watts: 1248, visible: true },
-            { id: 3, name: 'Midea Duo 14,000', amps: 11.3, watts: 1356, visible: true }
+        const DEFAULT_PRODUCTS = [
+            {
+                "id": 1,
+                "name": "Hisense 250 Sq. Ft. No Inverter 9 Amp",
+                "amps": 9,
+                "visible": false,
+                "watts": 1080,
+                "url": "https://www.lowes.com/pd/Hisense-7000-BTU-DOE-115-Volt-White-Vented-Wi-Fi-enabled-Portable-Air-Conditioner-with-Remote-Cools-299-sq-ft/5005337835",
+                "notes": "When the compressor is actively running in Cool Mode, the unit will pull a constant maximum wattage. Because it lacks an inverter, the compressor operates at a fixed speed, cycling entirely on and off instead of adjusting its cooling capacity."
+            },
+            {
+                "id": 2,
+                "name": "Midea Duo 450 Sq. Ft. With Inverter 10.5 Amp On High",
+                "amps": 10.5,
+                "visible": true,
+                "watts": 1260,
+                "url": "https://www.amazon.com/Midea-Efficiency-Conditioner-Compatible-Assistant/dp/B0GV3XFJPX",
+                "notes": "The Midea Duo’s inverter compressor dynamically adjusts its power draw to match your cooling needs. Setting it to low, medium, or high directly changes both the wattage and amperage. Cool Mode: Can run on Low, Medium, or High. Fan Mode: Can also run on Low, Medium, or High (independent of the compressor).\n\nCool Mode Consumption:\nHigh: 1,100 ~> 1,200 W, 9.2 ~> 10.5 A\nMedium: 600 ~> 800 W, 5.0 ~> 6.7 A\nLow: 250 ~> 450 W, 2.1 ~> 3.8 A"
+            },
+            {
+                "id": 1779618072224,
+                "name": "Midea Duo 450 Sq. Ft. With Inverter 6.7 Amp On Medium",
+                "amps": 6.7,
+                "watts": 804,
+                "url": "https://www.amazon.com/Midea-Efficiency-Conditioner-Compatible-Assistant/dp/B0GV3XFJPX",
+                "notes": "The Midea Duo’s inverter compressor dynamically adjusts its power draw to match your cooling needs. Setting it to low, medium, or high directly changes both the wattage and amperage. Cool Mode: Can run on Low, Medium, or High. Fan Mode: Can also run on Low, Medium, or High (independent of the compressor).\n\nCool Mode Consumption:\nHigh: 1,100 ~> 1,200 W, 9.2 ~> 10.5 A\nMedium: 600 ~> 800 W, 5.0 ~> 6.7 A\nLow: 250 ~> 450 W, 2.1 ~> 3.8 A",
+                "visible": false
+            },
+            {
+                "id": 1779618168928,
+                "name": "Midea Duo 450 Sq. Ft. With Inverter 3.8 Amp On Low",
+                "amps": 3.8,
+                "watts": 456,
+                "url": "https://www.amazon.com/Midea-Efficiency-Conditioner-Compatible-Assistant/dp/B0GV3XFJPX",
+                "notes": "The Midea Duo’s inverter compressor dynamically adjusts its power draw to match your cooling needs. Setting it to low, medium, or high directly changes both the wattage and amperage. Cool Mode: Can run on Low, Medium, or High. Fan Mode: Can also run on Low, Medium, or High (independent of the compressor).\n\nCool Mode Consumption:\nHigh: 1,100 ~> 1,200 W, 9.2 ~> 10.5 A\nMedium: 600 ~> 800 W, 5.0 ~> 6.7 A\nLow: 250 ~> 450 W, 2.1 ~> 3.8 A",
+                "visible": false
+            },
+            {
+                "id": 3,
+                "name": "Midea Duo 550 Sq. Ft. With Inverter 11.3 Amp On High",
+                "amps": 11.3,
+                "visible": false,
+                "watts": 1356,
+                "url": "https://www.amazon.com/Midea-Efficiency-Conditioner-Compatible-Assistant/dp/B0FC2SGGF9",
+                "notes": ""
+            },
+            {
+                "id": 1779533104454,
+                "name": "Computer 12600K 6800 XT, 50\" Screen",
+                "amps": 2.5,
+                "visible": true,
+                "watts": 300,
+                "url": "",
+                "notes": ""
+            },
+            {
+                "id": 1779535362238,
+                "name": "Fridge/Freezer Combo 200W 1998 Sun Chaser ",
+                "amps": 1.67,
+                "watts": 200,
+                "visible": true,
+                "url": "",
+                "notes": "Google Gemini told me the Fridge/Freezer combo might use either 200W or 400W in a 1998 Sun Chaser. I think I'm using the 200W version because if I was on the 400W version then I think I would be tripping breakers and I'm currently not tripping any breakers."
+            }
         ];
 
-        let cordCombos = JSON.parse(localStorage.getItem('vd_cords')) || [
-            { id: 1, name: '200 ft (10 AWG)', segments: [{ length: 200, awg: 10 }], visible: true },
-            { id: 2, name: '200 ft (10 AWG) + 25 ft (12 AWG)', segments: [{ length: 200, awg: 10 }, { length: 25, awg: 12 }], visible: true },
-            { id: 3, name: '200 ft (10 AWG) + 25 ft (10 AWG)', segments: [{ length: 200, awg: 10 }, { length: 25, awg: 10 }], visible: true }
+        const DEFAULT_CORDS = [
+            {
+                "id": 1,
+                "name": "200 ft (10 AWG)",
+                "segments": [
+                    {
+                        "length": 200,
+                        "awg": 10
+                    }
+                ],
+                "visible": true
+            },
+            {
+                "id": 3,
+                "name": "200 ft (10 AWG) + 25 ft (10 AWG)",
+                "segments": [
+                    {
+                        "length": 200,
+                        "awg": 10
+                    },
+                    {
+                        "length": 25,
+                        "awg": 10
+                    }
+                ],
+                "visible": true
+            },
+            {
+                "id": 2,
+                "name": "200 ft (10 AWG) + 25 ft (12 AWG)",
+                "segments": [
+                    {
+                        "length": 200,
+                        "awg": 10
+                    },
+                    {
+                        "length": 25,
+                        "awg": 12
+                    }
+                ],
+                "visible": true
+            },
+            {
+                "id": 1779533572152,
+                "name": "300 ft (10 AWG)",
+                "segments": [
+                    {
+                        "length": 300,
+                        "awg": 10
+                    }
+                ],
+                "visible": true
+            },
+            {
+                "id": 1779579010445,
+                "name": "300 ft (12 AWG)",
+                "segments": [
+                    {
+                        "length": 300,
+                        "awg": 12
+                    }
+                ],
+                "visible": true
+            }
         ];
+
+        let products = JSON.parse(localStorage.getItem('vd_products')) || JSON.parse(JSON.stringify(DEFAULT_PRODUCTS));
+        let cordCombos = JSON.parse(localStorage.getItem('vd_cords')) || JSON.parse(JSON.stringify(DEFAULT_CORDS));
 
         let editingId = null;
 
@@ -564,6 +723,8 @@
         function saveToStorage() {
             localStorage.setItem('vd_products', JSON.stringify(products));
             localStorage.setItem('vd_cords', JSON.stringify(cordCombos));
+            localStorage.setItem('vd_source_voltage', document.getElementById('source-voltage').value);
+            localStorage.setItem('vd_outlet_amperage', document.getElementById('outlet-amps').value);
         }
 
         // UI Handlers
@@ -577,6 +738,16 @@
         function closeModal(id) {
             document.getElementById(id).style.display = 'none';
             editingId = null;
+        }
+
+        function toggleNotes(id, btn) {
+            const container = document.getElementById(id);
+            container.classList.toggle('expanded');
+            if (container.classList.contains('expanded')) {
+                btn.innerHTML = 'less&nbsp;info';
+            } else {
+                btn.innerHTML = 'more&nbsp;info';
+            }
         }
 
         function autoResize(textarea) {
@@ -788,6 +959,22 @@
             }
         }
 
+        function deleteAllProducts() {
+            if (confirm('Are you sure you want to delete ALL products? This cannot be undone.')) {
+                products = [];
+                saveToStorage();
+                renderAll();
+            }
+        }
+
+        function deleteAllCords() {
+            if (confirm('Are you sure you want to delete ALL cord combinations? This cannot be undone.')) {
+                cordCombos = [];
+                saveToStorage();
+                renderAll();
+            }
+        }
+
         function toggleProductVisibility(id) {
             const p = products.find(x => x.id === id);
             p.visible = !p.visible;
@@ -889,6 +1076,8 @@
             const data = {
                 products: products,
                 cordCombos: cordCombos,
+                sourceVoltage: parseFloat(document.getElementById('source-voltage').value),
+                outletAmperage: parseFloat(document.getElementById('outlet-amps').value),
                 version: "1.0",
                 exportDate: new Date().toISOString()
             };
@@ -904,6 +1093,29 @@
 
         function importData() {
             document.getElementById('import-file').click();
+        }
+
+        async function loadDefaultData(showConfirm = true) {
+            if (showConfirm && !confirm('Load default data? This will overwrite your current settings, products and cord combos.')) {
+                return;
+            }
+
+            try {
+                const response = await fetch('defaults.json');
+                const data = await response.json();
+                if (data.products && data.cordCombos) {
+                    products = data.products;
+                    cordCombos = data.cordCombos;
+                    if (data.sourceVoltage) document.getElementById('source-voltage').value = data.sourceVoltage;
+                    if (data.outletAmperage) document.getElementById('outlet-amps').value = data.outletAmperage;
+                    saveToStorage();
+                    renderAll();
+                    if (showConfirm) alert('Default data loaded successfully!');
+                }
+            } catch (error) {
+                console.error('Error loading defaults.json:', error);
+                if (showConfirm) alert('Error loading defaults.json. Please ensure the file exists and you are using a web server.');
+            }
         }
 
         function openUrlInNewTab() {
@@ -924,9 +1136,11 @@
                 try {
                     const data = JSON.parse(e.target.result);
                     if (data.products && data.cordCombos) {
-                        if (confirm('Import data? This will overwrite your current products and cord combos.')) {
+                        if (confirm('Import data? This will overwrite your current settings, products and cord combos.')) {
                             products = data.products;
                             cordCombos = data.cordCombos;
+                            if (data.sourceVoltage) document.getElementById('source-voltage').value = data.sourceVoltage;
+                            if (data.outletAmperage) document.getElementById('outlet-amps').value = data.outletAmperage;
                             saveToStorage();
                             renderAll();
                             alert('Data imported successfully!');
@@ -1025,7 +1239,7 @@
                         const totalCalc = calculateVoltageDrop(totalVisibleAmps, cord.segments);
                         cordCell = `
                             <td rowspan="${visibleProducts.length}" class="cord-setup-cell" onclick="openCordModal(${cord.id})" style="cursor:pointer; border-right: 1px solid #044;">
-                                <div>${cord.name}</div>
+                                <div>${cord.name.replace(/\+/g, '+<br>')}</div>
                                 <span class="total-length">Total Length: ${calc.totalLength} ft</span>
                                 <div style="font-size:0.7em; color:var(--highlight); margin-top:5px;">[ Click to Edit ]</div>
                             </td>
@@ -1046,11 +1260,24 @@
                         `;
                     }
 
+                    let notesHtml = "";
+                    if (prod.notes) {
+                        const notesId = `notes-${cord.id}-${prod.id}`;
+                        notesHtml = `
+                            <div style="display: flex; align-items: baseline; gap: 5px;">
+                                <div id="${notesId}" class="notes-container">
+                                    ${prod.notes.replace(/\n/g, "<br>")}
+                                </div>
+                                <span class="toggle-notes" onclick="toggleNotes('${notesId}', this)">more&nbsp;info</span>
+                            </div>
+                        `;
+                    }
+
                     let prodNameCell = `
                         <div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 8px;">
                             <div style="text-align: left;">
                                 ${prod.url ? `<a href="${prod.url}" target="_blank" style="color:var(--highlight); text-decoration:none;">${prod.name}</a>` : prod.name}
-                                ${prod.notes ? `<div style="font-size:0.75em; color:#aaa; margin-top:4px; font-style:italic;">${prod.notes.replace(/\n/g, "<br>")}</div>` : ""}
+                                ${notesHtml}
                             </div>
                             ${prod.url ? `
                                 <a href="${prod.url}" target="_blank" style="color:var(--highlight); flex-shrink: 0;" title="Open link in new tab">
@@ -1062,7 +1289,7 @@
 
                     row.innerHTML = `
                         ${cordCell}
-                        <td>${prodNameCell}</td>
+                        <td class="product-name-cell">${prodNameCell}</td>
                         <td>${prod.watts || Math.round(prod.amps * vSource)}W</td>
                         <td>${prod.amps}A</td>
                         <td class="${safety.class}">${calc.dropPercent}% Drop</td>
@@ -1075,6 +1302,11 @@
             });
         }
 
+        function saveAndRender() {
+            saveToStorage();
+            renderTable();
+        }
+
         function renderAll() {
             renderToggles();
             renderTable();
@@ -1082,10 +1314,46 @@
 
         // Init
         document.getElementById('source-voltage').addEventListener('change', () => {
-            renderTable();
+            saveAndRender();
         });
 
-        window.onload = renderAll;
+        // Close modal on backdrop click
+        window.addEventListener('click', (event) => {
+            if (event.target.classList.contains('modal')) {
+                closeModal(event.target.id);
+            }
+        });
+
+        // Close modal on Escape key
+        window.addEventListener('keydown', (event) => {
+            if (event.key === 'Escape') {
+                ['product-modal', 'cord-modal'].forEach(id => {
+                    const modal = document.getElementById(id);
+                    if (modal && modal.style.display === 'block') {
+                        closeModal(id);
+                    }
+                });
+            }
+        });
+
+        async function initializeApp() {
+            const storedProducts = localStorage.getItem('vd_products');
+            const storedCords = localStorage.getItem('vd_cords');
+            const storedVoltage = localStorage.getItem('vd_source_voltage');
+            const storedAmperage = localStorage.getItem('vd_outlet_amperage');
+
+            if (storedProducts && storedCords) {
+                products = JSON.parse(storedProducts);
+                cordCombos = JSON.parse(storedCords);
+                if (storedVoltage) document.getElementById('source-voltage').value = storedVoltage;
+                if (storedAmperage) document.getElementById('outlet-amps').value = storedAmperage;
+                renderAll();
+            } else {
+                await loadDefaultData(false);
+            }
+        }
+
+        window.onload = initializeApp;
 
     </script>
 </body>
