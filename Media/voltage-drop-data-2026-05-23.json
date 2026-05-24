@@ -1,0 +1,116 @@
+{
+  "products": [
+    {
+      "id": 1,
+      "name": "Hisense 250 Sq. Ft. 9 Amp",
+      "amps": 9,
+      "visible": false,
+      "watts": 1080,
+      "url": "",
+      "notes": ""
+    },
+    {
+      "id": 2,
+      "name": "Midea Duo 450 Sq. Ft. 10.4 Amp",
+      "amps": 10.4,
+      "visible": true,
+      "watts": 1248,
+      "url": "https://www.amazon.com/Midea-Efficiency-Conditioner-Compatible-Assistant/dp/B0GV3XFJPX",
+      "notes": ""
+    },
+    {
+      "id": 3,
+      "name": "Midea Duo 550 Sq. Ft. 11.3 Amp",
+      "amps": 11.3,
+      "visible": false,
+      "watts": 1356,
+      "url": "https://www.amazon.com/Midea-Efficiency-Conditioner-Compatible-Assistant/dp/B0FC2SGGF9",
+      "notes": ""
+    },
+    {
+      "id": 1779533104454,
+      "name": "Computer 12600K 6800 XT, 50\" Screen",
+      "amps": 2.5,
+      "visible": true,
+      "watts": 300,
+      "url": "",
+      "notes": ""
+    },
+    {
+      "id": 1779535362238,
+      "name": "Fridge/Freezer Combo 200W 1998 Sun Chaser ",
+      "amps": 1.67,
+      "watts": 200,
+      "visible": true,
+      "url": "",
+      "notes": "Google Gemini told me the Fridge/Freezer combo might use either 200W or 400W in a 1998 Sun Chaser. I think I'm using the 200W version because if I was on the 400W version then I think I would be tripping breakers and I'm currently not tripping any breakers."
+    }
+  ],
+  "cordCombos": [
+    {
+      "id": 1,
+      "name": "200 ft (10 AWG)",
+      "segments": [
+        {
+          "length": 200,
+          "awg": 10
+        }
+      ],
+      "visible": true
+    },
+    {
+      "id": 3,
+      "name": "200 ft (10 AWG) + 25 ft (10 AWG)",
+      "segments": [
+        {
+          "length": 200,
+          "awg": 10
+        },
+        {
+          "length": 25,
+          "awg": 10
+        }
+      ],
+      "visible": true
+    },
+    {
+      "id": 2,
+      "name": "200 ft (10 AWG) + 25 ft (12 AWG)",
+      "segments": [
+        {
+          "length": 200,
+          "awg": 10
+        },
+        {
+          "length": 25,
+          "awg": 12
+        }
+      ],
+      "visible": true
+    },
+    {
+      "id": 1779533572152,
+      "name": "300 ft (10 AWG)",
+      "segments": [
+        {
+          "length": 300,
+          "awg": 10
+        }
+      ],
+      "visible": true
+    },
+    {
+      "id": 1779579010445,
+      "name": "300 ft (12 AWG)",
+      "segments": [
+        {
+          "length": 300,
+          "awg": 12
+        }
+      ],
+      "visible": true
+    }
+  ],
+  "version": "1.0",
+  "exportDate": "2026-05-24T00:28:17.690Z"
+}

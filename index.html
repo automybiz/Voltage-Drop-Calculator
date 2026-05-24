@@ -9,19 +9,27 @@
             --bg-color: #011;
             --text-color: #fff;
             --table-border: #0ff;
+            --table-header-bg-color: #022;
+            --table-row-bg-color: #201;
             --input-bg: #111;
             --highlight: #0ff;
             
             /* Accordion Variables */
-            --question-bg-color: #002222;
-            --question-border-color: #009999;
-            --question-hover-bg-color: #003333;
+            --question-bg-color: #022;
+            --question-border-color: #099;
+            --question-hover-bg-color: #033;
             --answer-bg-color: #050505;
             --border-radius: 8px;
             --accordion-spacing: 10px;
-            --panel-bg-color: #301;
+            --panel-bg-color: #201;
             --capacity-ok: #44FF44;
             --capacity-over: #FF4444;
+
+            /* Button Variables */
+            --button-text-color: #FFF;
+            --button-bg-color: #033;
+            --button-border-color: #0FF;
+            --button-hover-bg-color: #066;
 
             /* Safety Result Colors */
             --safety-excellent: #42A5F5;
@@ -47,8 +55,8 @@
         }
 
         .container {
-            width: 100%;
-            max-width: 1500px;
+            width: 95%;
+            max-width: none;
         }
 
         /* Accordion Styles */
@@ -87,6 +95,7 @@
             background-color: var(--panel-bg-color);
             padding: 15px;
             display: block; /* Shown by default based on screenshot */
+            position: relative;
         }
 
         .accordion-content.closed {
@@ -160,6 +169,24 @@
             accent-color: var(--highlight);
         }
 
+        .drag-handle {
+            cursor: grab;
+            padding-right: 5px;
+            color: var(--highlight);
+            user-select: none;
+            font-size: 1.2em;
+        }
+
+        .visibility-item.dragging {
+            opacity: 0.4;
+            background-color: rgba(0, 255, 255, 0.1);
+        }
+
+        .visibility-item.drag-over {
+            border-top: 2px solid var(--highlight);
+            margin-top: -2px;
+        }
+
         /* Buttons */
         .button-group {
             display: flex;
@@ -168,9 +195,9 @@
         }
 
         .btn {
-            background-color: #004444;
-            color: #fff;
-            border: 1px solid var(--highlight);
+            background-color: var(--button-bg-color);
+            color: var(--button-text-color);
+            border: 1px solid var(--button-border-color);
             padding: 6px 12px;
             border-radius: 4px;
             cursor: pointer;
@@ -180,14 +207,22 @@
         }
 
         .btn:hover {
-            background-color: #006666;
+            background-color: var(--button-hover-bg-color);
             box-shadow: 0 0 5px var(--highlight);
         }
 
-        .btn-add { background-color: #005555; }
-        .btn-edit { background-color: #003333; }
-        .btn-delete { background-color: #440000; border-color: #f44; }
+        .btn-add { }
+        .btn-edit { }
+        .btn-delete { border-color: #f44; }
         .btn-delete:hover { background-color: #660000; box-shadow: 0 0 5px #f44; }
+
+        .import-export-container {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            display: flex;
+            gap: 10px;
+        }
 
         /* Table Styles */
         table {
@@ -209,7 +244,7 @@
         }
 
         th {
-            background-color: #022;
+            background-color: var(--table-header-bg-color);
             color: var(--highlight);
             text-transform: uppercase;
             font-size: 0.85em;
@@ -217,7 +252,7 @@
         }
 
         td {
-            background-color: #001111;
+            background-color: var(--table-row-bg-color);
         }
 
         tr:last-child td {
@@ -299,7 +334,7 @@
             font-size: 0.9em;
         }
 
-        input, select {
+        input, select, textarea {
             background-color: var(--input-bg);
             color: var(--text-color);
             border: 1px solid #066;
@@ -308,10 +343,17 @@
             font-family: inherit;
         }
 
-        input:focus, select:focus {
+        input:focus, select:focus, textarea:focus {
             outline: none;
             border-color: var(--highlight);
             box-shadow: 0 0 5px var(--highlight);
+        }
+
+        textarea.auto-expand {
+            overflow: hidden;
+            resize: none;
+            min-height: 60px;
+            line-height: 1.4;
         }
 
         .modal-footer {
@@ -359,6 +401,11 @@
                 <span id="accordion-arrow">▲</span>
             </div>
             <div id="settings-content" class="accordion-content">
+                <div class="import-export-container">
+                    <button class="btn btn-edit" onclick="exportData()">Export Data</button>
+                    <button class="btn btn-edit" onclick="importData()">Import Data</button>
+                    <input type="file" id="import-file" style="display:none" onchange="handleImport(event)">
+                </div>
                 <div class="settings-grid">
                     <div class="setting-item">
                         <label>Source Voltage (V)</label>
@@ -436,6 +483,19 @@
                     <label>Watts (W)</label>
                     <input type="number" id="prod-watts" step="1" oninput="syncAmpsWatts('watts')">
                 </div>
+                <div class="form-group full-width">
+                    <label>Product URL</label>
+                    <div style="display: flex; gap: 10px;">
+                        <input type="url" id="prod-url" style="flex-grow: 1;" placeholder="https://...">
+                        <button class="btn" onclick="openUrlInNewTab()" title="Open link in new tab">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: middle;"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+                        </button>
+                    </div>
+                </div>
+                <div class="form-group full-width">
+                    <label>Notes</label>
+                    <textarea id="prod-notes" class="auto-expand" placeholder="Enter product notes..." oninput="autoResize(this)"></textarea>
+                </div>
             </div>
             <div class="modal-footer">
                 <button class="btn btn-delete" id="btn-delete-product" style="display:none;" onclick="deleteProduct()">Delete</button>
@@ -476,6 +536,8 @@
 
     <script>
         // State Management
+        let draggedItem = null;
+
         let products = JSON.parse(localStorage.getItem('vd_products')) || [
             { id: 1, name: 'Insignia (~6k)', amps: 10, watts: 1200, visible: true },
             { id: 2, name: 'Midea Duo 12,000', amps: 10.4, watts: 1248, visible: true },
@@ -517,15 +579,23 @@
             editingId = null;
         }
 
+        function autoResize(textarea) {
+            textarea.style.height = 'auto';
+            textarea.style.height = textarea.scrollHeight + 'px';
+        }
+
         function openProductModal(id = null) {
             const modal = document.getElementById('product-modal');
             const title = document.getElementById('product-modal-title');
             const deleteBtn = document.getElementById('btn-delete-product');
+            const notesField = document.getElementById('prod-notes');
             
             if (id) {
                 const p = products.find(x => x.id === id);
                 document.getElementById('prod-name').value = p.name;
                 document.getElementById('prod-amps').value = p.amps;
+                document.getElementById('prod-url').value = p.url || '';
+                notesField.value = p.notes || '';
                 syncAmpsWatts('amps');
                 title.innerText = 'Edit Product';
                 deleteBtn.style.display = 'block';
@@ -534,10 +604,13 @@
                 document.getElementById('prod-name').value = '';
                 document.getElementById('prod-amps').value = '';
                 document.getElementById('prod-watts').value = '';
+                document.getElementById('prod-url').value = '';
+                notesField.value = '';
                 title.innerText = 'Add Electrical Product';
                 deleteBtn.style.display = 'none';
             }
             modal.style.display = 'block';
+            autoResize(notesField);
         }
 
         function openCordModal(id = null) {
@@ -648,6 +721,8 @@
             const name = document.getElementById('prod-name').value;
             const amps = parseFloat(document.getElementById('prod-amps').value);
             const watts = parseInt(document.getElementById('prod-watts').value);
+            const url = document.getElementById('prod-url').value;
+            const notes = document.getElementById('prod-notes').value;
             
             if (!name || isNaN(amps)) return alert('Please fill in all fields');
 
@@ -656,8 +731,10 @@
                 p.name = name;
                 p.amps = amps;
                 p.watts = watts;
+                p.url = url;
+                p.notes = notes;
             } else {
-                products.push({ id: Date.now(), name, amps, watts, visible: true });
+                products.push({ id: Date.now(), name, amps, watts, url, notes, visible: true });
             }
             
             saveToStorage();
@@ -691,20 +768,22 @@
             renderAll();
         }
 
-        function deleteProduct() {
+        function deleteProduct(id = null) {
+            const targetId = id || editingId;
             if (confirm('Delete this product?')) {
-                products = products.filter(x => x.id !== editingId);
+                products = products.filter(x => x.id !== targetId);
                 saveToStorage();
-                closeModal('product-modal');
+                if (!id) closeModal('product-modal');
                 renderAll();
             }
         }
 
-        function deleteCord() {
+        function deleteCord(id = null) {
+            const targetId = id || editingId;
             if (confirm('Delete this cord combo?')) {
-                cordCombos = cordCombos.filter(x => x.id !== editingId);
+                cordCombos = cordCombos.filter(x => x.id !== targetId);
                 saveToStorage();
-                closeModal('cord-modal');
+                if (!id) closeModal('cord-modal');
                 renderAll();
             }
         }
@@ -756,6 +835,113 @@
             return { class: 'warning', text: 'WARNING (Do Not Recommend)' };
         }
 
+        // Drag and Drop Handlers
+        function handleDragStart(e, type, id) {
+            draggedItem = { type, id };
+            e.target.classList.add('dragging');
+            e.dataTransfer.effectAllowed = 'move';
+        }
+
+        function handleDragEnd(e) {
+            e.target.classList.remove('dragging');
+            draggedItem = null;
+        }
+
+        function handleDragOver(e, type) {
+            e.preventDefault();
+            if (!draggedItem || draggedItem.type !== type) return;
+            
+            e.dataTransfer.dropEffect = 'move';
+            const target = e.target.closest('.visibility-item');
+            if (target && !target.classList.contains('dragging')) {
+                target.classList.add('drag-over');
+            }
+        }
+
+        function handleDragLeave(e) {
+            const target = e.target.closest('.visibility-item');
+            if (target) {
+                target.classList.remove('drag-over');
+            }
+        }
+
+        function handleDrop(e, type, targetId) {
+            e.preventDefault();
+            const target = e.target.closest('.visibility-item');
+            if (target) target.classList.remove('drag-over');
+
+            if (!draggedItem || draggedItem.type !== type || draggedItem.id === targetId) return;
+
+            const list = type === 'products' ? products : cordCombos;
+            const fromIndex = list.findIndex(item => item.id === draggedItem.id);
+            const toIndex = list.findIndex(item => item.id === targetId);
+
+            if (fromIndex !== -1 && toIndex !== -1) {
+                const [movedItem] = list.splice(fromIndex, 1);
+                list.splice(toIndex, 0, movedItem);
+                saveToStorage();
+                renderAll();
+            }
+        }
+
+        // Import / Export Logic
+        function exportData() {
+            const data = {
+                products: products,
+                cordCombos: cordCombos,
+                version: "1.0",
+                exportDate: new Date().toISOString()
+            };
+            const json = JSON.stringify(data, null, 2);
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(json);
+            const downloadAnchorNode = document.createElement('a');
+            downloadAnchorNode.setAttribute("href", dataStr);
+            downloadAnchorNode.setAttribute("download", `voltage-drop-data-${new Date().toISOString().split('T')[0]}.json`);
+            document.body.appendChild(downloadAnchorNode);
+            downloadAnchorNode.click();
+            downloadAnchorNode.remove();
+        }
+
+        function importData() {
+            document.getElementById('import-file').click();
+        }
+
+        function openUrlInNewTab() {
+            const url = document.getElementById("prod-url").value;
+            if (url) {
+                window.open(url, "_blank");
+            } else {
+                alert("Please enter a URL first.");
+            }
+        }
+
+        function handleImport(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const data = JSON.parse(e.target.result);
+                    if (data.products && data.cordCombos) {
+                        if (confirm('Import data? This will overwrite your current products and cord combos.')) {
+                            products = data.products;
+                            cordCombos = data.cordCombos;
+                            saveToStorage();
+                            renderAll();
+                            alert('Data imported successfully!');
+                        }
+                    } else {
+                        alert('Invalid data format.');
+                    }
+                } catch (err) {
+                    alert('Error parsing JSON file.');
+                }
+            };
+            reader.readAsText(file);
+            event.target.value = ''; // Reset input
+        }
+
         // Rendering
         function renderToggles() {
             const prodContainer = document.getElementById('product-toggles');
@@ -763,10 +949,19 @@
             products.forEach(p => {
                 const div = document.createElement('div');
                 div.className = 'visibility-item';
+                div.draggable = true;
+                div.ondragstart = (e) => handleDragStart(e, 'products', p.id);
+                div.ondragover = (e) => handleDragOver(e, 'products');
+                div.ondragleave = (e) => handleDragLeave(e);
+                div.ondrop = (e) => handleDrop(e, 'products', p.id);
+                div.ondragend = (e) => handleDragEnd(e);
+                
                 div.innerHTML = `
+                    <span class="drag-handle" title="Drag to reorder">☰</span>
                     <input type="checkbox" id="chk-p-${p.id}" ${p.visible ? 'checked' : ''} onchange="toggleProductVisibility(${p.id})">
                     <label for="chk-p-${p.id}">${p.name}</label>
                     <button class="btn btn-edit" style="padding: 2px 6px; font-size: 0.7em;" onclick="openProductModal(${p.id})">Edit</button>
+                    <button class="btn btn-delete" style="padding: 2px 6px; font-size: 0.7em;" onclick="deleteProduct(${p.id})">Delete</button>
                 `;
                 prodContainer.appendChild(div);
             });
@@ -776,10 +971,19 @@
             cordCombos.forEach(c => {
                 const div = document.createElement('div');
                 div.className = 'visibility-item';
+                div.draggable = true;
+                div.ondragstart = (e) => handleDragStart(e, 'cords', c.id);
+                div.ondragover = (e) => handleDragOver(e, 'cords');
+                div.ondragleave = (e) => handleDragLeave(e);
+                div.ondrop = (e) => handleDrop(e, 'cords', c.id);
+                div.ondragend = (e) => handleDragEnd(e);
+
                 div.innerHTML = `
+                    <span class="drag-handle" title="Drag to reorder">☰</span>
                     <input type="checkbox" id="chk-c-${c.id}" ${c.visible ? 'checked' : ''} onchange="toggleCordVisibility(${c.id})">
                     <label for="chk-c-${c.id}">${c.name}</label>
                     <button class="btn btn-edit" style="padding: 2px 6px; font-size: 0.7em;" onclick="openCordModal(${c.id})">Edit</button>
+                    <button class="btn btn-delete" style="padding: 2px 6px; font-size: 0.7em;" onclick="deleteCord(${c.id})">Delete</button>
                 `;
                 cordContainer.appendChild(div);
             });
@@ -828,25 +1032,39 @@
                         `;
                         totalLoadCell = `
                             <td rowspan="${visibleProducts.length}" style="font-weight:bold; color:var(--highlight); border-right: 1px solid #044;">
-                                <div>${totalVisibleWatts} W</div>
-                                <div style="font-size:0.9em; color:#fff;">${totalVisibleAmps.toFixed(1)} A</div>
+                                <div>${totalVisibleWatts}W</div>
+                                <div style="font-size:0.9em; color:#fff;">${totalVisibleAmps.toFixed(1)}A</div>
                                 <div style="font-size:0.8em; color:var(--safety-warning); margin-top:4px;">-${totalCalc.totalDropV}V Drop</div>
                             </td>
                         `;
                         availableCell = `
                             <td rowspan="${visibleProducts.length}" style="font-weight:bold; color:${isOverloaded ? 'var(--safety-danger)' : 'var(--capacity-ok)'};">
-                                <div>${remainingWatts.toFixed(0)} W</div>
-                                <div style="font-size:0.9em;">${remainingAmps.toFixed(1)} A</div>
+                                <div>${remainingWatts.toFixed(0)}W</div>
+                                <div style="font-size:0.9em;">${remainingAmps.toFixed(1)}A</div>
                                 <div style="font-size:0.7em; margin-top:5px;">${isOverloaded ? 'OVERLOAD' : 'AVAILABLE'}</div>
                             </td>
                         `;
                     }
 
+                    let prodNameCell = `
+                        <div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 8px;">
+                            <div style="text-align: left;">
+                                ${prod.url ? `<a href="${prod.url}" target="_blank" style="color:var(--highlight); text-decoration:none;">${prod.name}</a>` : prod.name}
+                                ${prod.notes ? `<div style="font-size:0.75em; color:#aaa; margin-top:4px; font-style:italic;">${prod.notes.replace(/\n/g, "<br>")}</div>` : ""}
+                            </div>
+                            ${prod.url ? `
+                                <a href="${prod.url}" target="_blank" style="color:var(--highlight); flex-shrink: 0;" title="Open link in new tab">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+                                </a>
+                            ` : ""}
+                        </div>
+                    `;
+
                     row.innerHTML = `
                         ${cordCell}
-                        <td>${prod.name}</td>
-                        <td>${prod.watts || Math.round(prod.amps * vSource)} W</td>
-                        <td>${prod.amps} Amps</td>
+                        <td>${prodNameCell}</td>
+                        <td>${prod.watts || Math.round(prod.amps * vSource)}W</td>
+                        <td>${prod.amps}A</td>
                         <td class="${safety.class}">${calc.dropPercent}% Drop</td>
                         <td class="${safety.class}">${safety.text}</td>
                         ${totalLoadCell}
