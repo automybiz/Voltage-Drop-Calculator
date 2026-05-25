@@ -14,6 +14,7 @@
             --table-border: #0ff;
             --table-header-bg-color: #022;
             --table-row-bg-color: #201;
+            --table-row-hover-bg-color: #301;
             --input-bg: #111;
             --highlight: #0ff;
             
@@ -297,7 +298,11 @@
             background-color: var(--table-row-bg-color);
         }
 
-        tr:last-child td {
+        .results-group:hover td {
+            background-color: var(--table-row-hover-bg-color);
+        }
+
+        tbody:last-of-type tr:last-child td {
             border-bottom: none;
         }
 
@@ -614,9 +619,7 @@
                     <th>Available Capacity</th>
                 </tr>
             </thead>
-            <tbody id="results-body">
-                <!-- Rows injected by JS -->
-            </tbody>
+            <!-- Rows injected by JS using multiple tbody elements -->
         </table>
 
         <!-- Additional Info Accordion -->
@@ -1396,14 +1399,18 @@ The default Visible Midea Duo AC unit was chosen to start the calculator with be
         }
 
         function renderTable() {
-            const body = document.getElementById('results-body');
-            body.innerHTML = '';
+            const table = document.getElementById('results-table');
+            // Remove all existing tbody elements
+            const oldBodies = table.querySelectorAll('tbody');
+            oldBodies.forEach(b => b.remove());
             
             const visibleProducts = products.filter(p => p.visible);
             const visibleCords = cordCombos.filter(c => c.visible);
 
             if (visibleProducts.length === 0 || visibleCords.length === 0) {
-                body.innerHTML = `<tr><td colspan="9">No ${visibleProducts.length === 0 ? 'products' : 'cord combos'} enabled.</td></tr>`;
+                const emptyBody = document.createElement('tbody');
+                emptyBody.innerHTML = `<tr><td colspan="9">No ${visibleProducts.length === 0 ? 'products' : 'cord combos'} enabled.</td></tr>`;
+                table.appendChild(emptyBody);
                 return;
             }
 
@@ -1419,6 +1426,9 @@ The default Visible Midea Duo AC unit was chosen to start the calculator with be
             const isOverloaded = remainingAmps < 0;
 
             visibleCords.forEach(cord => {
+                const groupBody = document.createElement('tbody');
+                groupBody.className = 'results-group';
+
                 visibleProducts.forEach((prod, index) => {
                     const row = document.createElement('tr');
                     const calc = calculateVoltageDrop(prod.amps, cord.segments);
@@ -1486,8 +1496,9 @@ The default Visible Midea Duo AC unit was chosen to start the calculator with be
                         ${totalLoadCell}
                         ${availableCell}
                     `;
-                    body.appendChild(row);
+                    groupBody.appendChild(row);
                 });
+                table.appendChild(groupBody);
             });
         }
 
