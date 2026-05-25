@@ -21,12 +21,12 @@
             --question-bg-color: #022;
             --question-border-color: #099;
             --question-hover-bg-color: #033;
-            --answer-bg-color: #050505;
+            --answer-bg-color: #000;
             --border-radius: 8px;
             --accordion-spacing: 10px;
             --panel-bg-color: #201;
-            --capacity-ok: #44FF44;
-            --capacity-over: #FF4444;
+            --capacity-ok: #4F4;
+            --capacity-over: #F44;
 
             /* Button Variables */
             --button-text-color: #FFF;
@@ -42,13 +42,10 @@
             --input-placeholder-text-color: #999;
 
             /* Safety Result Colors */
-            --safety-excellent: #42A5F5;
-            --safety-safe: #44FF44;
-            --safety-warning: #FFA500;
-            --safety-danger: #FF4444;
-
-            /* SVG Button Color */
-            --button-svg-color: #0FF;
+            --safety-excellent: #4AF;
+            --safety-safe: #4F4;
+            --safety-warning: #FA0;
+            --safety-danger: #F44;
         }
 
         body {
@@ -261,6 +258,33 @@
 
         .product-name-cell {
             white-space: normal !important;
+            position: relative;
+            padding-right: 32px !important;
+        }
+
+        .external-link-icon {
+            position: absolute;
+            top: 12px;
+            right: 8px;
+            color: var(--highlight);
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.2s;
+        }
+
+        .external-link-icon:hover {
+            transform: scale(1.2);
+            color: #fff;
+        }
+
+        .notes-wrapper {
+            display: flex;
+            align-items: baseline;
+            justify-content: space-between;
+            gap: 10px;
+            width: 100%;
         }
 
         th {
@@ -1399,7 +1423,7 @@
                     if (prod.notes) {
                         const notesId = `notes-${cord.id}-${prod.id}`;
                         notesHtml = `
-                            <div style="display: flex; align-items: baseline; gap: 5px;">
+                            <div class="notes-wrapper">
                                 <div id="${notesId}" class="notes-container">${prod.notes}</div>
                                 <span class="toggle-notes" onclick="toggleNotes('${notesId}', this)">more</span>
                             </div>
@@ -1407,17 +1431,15 @@
                     }
 
                     let prodNameCell = `
-                        <div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 8px;">
-                            <div style="text-align: left;">
-                                ${prod.url ? `<a href="${prod.url}" target="_blank" style="color:var(--highlight); text-decoration:none;">${prod.name}</a>` : prod.name}
-                                ${notesHtml}
-                            </div>
-                            ${prod.url ? `
-                                <a href="${prod.url}" target="_blank" style="color:var(--highlight); flex-shrink: 0;" title="Open link in new tab">
-                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
-                                </a>
-                            ` : ""}
+                        <div style="text-align: left;">
+                            ${prod.url ? `<a href="${prod.url}" target="_blank" style="color:var(--highlight); text-decoration:none;">${prod.name}</a>` : prod.name}
+                            ${notesHtml}
                         </div>
+                        ${prod.url ? `
+                            <a href="${prod.url}" target="_blank" class="external-link-icon" title="Open link in new tab">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+                            </a>
+                        ` : ""}
                     `;
 
                     row.innerHTML = `
