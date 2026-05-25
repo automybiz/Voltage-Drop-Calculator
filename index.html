@@ -14,7 +14,7 @@
             --table-border: #0ff;
             --table-header-bg-color: #022;
             --table-row-bg-color: #201;
-            --table-row-hover-bg-color: #301;
+            --table-row-hover-bg-color: #401;
             --input-bg: #111;
             --highlight: #0ff;
             
@@ -549,8 +549,26 @@
     <div class="container">
         <h1>⚡ Voltage Drop Calculator ⚡</h1>
 
+        <!-- Main Results Table -->
+        <table id="results-table">
+            <thead>
+                <tr>
+                    <th>Cord Combos</th>
+                    <th>Electrical Product</th>
+                    <th>DB</th>
+                    <th>Watts</th>
+                    <th>Amps</th>
+                    <th>Voltage Drop %</th>
+                    <th>Safety Result</th>
+                    <th>Total Load</th>
+                    <th>Available Capacity</th>
+                </tr>
+            </thead>
+            <!-- Rows injected by JS using multiple tbody elements -->
+        </table>
+
         <!-- Settings Accordion -->
-        <div class="accordion-container">
+        <div class="accordion-container" style="margin-top: 20px;">
             <div class="accordion-header" onclick="toggleAccordion()">
                 <h3>Default Global Settings</h3>
                 <span id="accordion-arrow">▲</span>
@@ -603,24 +621,6 @@
                 </div>
             </div>
         </div>
-
-        <!-- Main Results Table -->
-        <table id="results-table">
-            <thead>
-                <tr>
-                    <th>Cord Combos</th>
-                    <th>Electrical Product</th>
-                    <th>DB</th>
-                    <th>Watts</th>
-                    <th>Amps</th>
-                    <th>Voltage Drop %</th>
-                    <th>Safety Result</th>
-                    <th>Total Load</th>
-                    <th>Available Capacity</th>
-                </tr>
-            </thead>
-            <!-- Rows injected by JS using multiple tbody elements -->
-        </table>
 
         <!-- Additional Info Accordion -->
         <div class="accordion-container" style="margin-top: 20px;">
