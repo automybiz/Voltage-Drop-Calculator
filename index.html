@@ -5,6 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Voltage Drop Calculator</title>
     <style>
+        * {
+            box-sizing: border-box;
+        }
         :root {
             --bg-color: #011;
             --text-color: #fff;
@@ -28,6 +31,7 @@
             /* Button Variables */
             --button-text-color: #FFF;
             --button-bg-color: #033;
+            --button-svg-color: #0FF;
             --button-border-color: #0FF;
             --button-hover-bg-color: #066;
 
@@ -42,6 +46,9 @@
             --safety-safe: #44FF44;
             --safety-warning: #FFA500;
             --safety-danger: #FF4444;
+
+            /* SVG Button Color */
+            --button-svg-color: #0FF;
         }
 
         body {
@@ -310,7 +317,7 @@
             border: 1px solid var(--highlight);
             border-radius: 12px;
             width: 90%;
-            max-width: 550px;
+            max-width: 800px;
             box-shadow: 0 0 30px rgba(0, 255, 255, 0.4);
             position: relative;
         }
@@ -418,10 +425,13 @@
             display: -webkit-box;
             -webkit-line-clamp: 1;
             -webkit-box-orient: vertical;
+            white-space: pre-wrap;
+            word-break: break-word;
         }
         .notes-container.expanded {
             max-height: 1000px; /* High enough to accommodate content */
             -webkit-line-clamp: unset;
+            display: block;
         }
         .toggle-notes {
             color: var(--highlight);
@@ -432,6 +442,77 @@
             margin-top: 2px;
             user-select: none;
             white-space: nowrap;
+        }
+
+        /* SVG Buttons */
+        .btn svg, .btn-svg svg, .product-name-cell svg {
+            stroke: var(--button-svg-color);
+        }
+        
+        .btn-svg {
+            background: none;
+            border: none;
+            padding: 4px;
+            cursor: pointer;
+            color: var(--button-svg-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.2s;
+        }
+        
+        .btn-svg:hover {
+            transform: scale(1.2);
+            color: #fff;
+        }
+
+        .notes-maximized-container {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: 3000;
+            background-color: var(--bg-color);
+            padding: 20px;
+            flex-direction: column;
+        }
+
+        .notes-maximized-container.active {
+            display: flex;
+        }
+
+        .notes-maximized-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            flex-shrink: 0;
+        }
+
+        .notes-maximized-header h2 {
+            margin: 0;
+            font-size: 1.5em;
+            color: var(--highlight);
+            text-align: left;
+        }
+
+        .notes-maximized-container textarea {
+            flex-grow: 1;
+            background-color: var(--input-bg-color);
+            color: var(--input-text-color);
+            border: 1px solid var(--highlight);
+            padding: 20px;
+            font-size: 1.1em;
+            resize: none;
+            outline: none;
+            width: 100%;
+            overflow-y: auto;
+        }
+
+        .notes-maximized-container textarea:focus {
+            box-shadow: 0 0 15px var(--highlight);
         }
 
     </style>
@@ -544,7 +625,12 @@
                     </div>
                 </div>
                 <div class="form-group full-width">
-                    <label>Notes</label>
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <label>Notes</label>
+                        <button class="btn-svg" id="btn-maximize-notes" onclick="toggleMaximizeNotes()" title="Maximize Notes">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 3 21 3 21 9"></polyline><polyline points="9 21 3 21 3 15"></polyline><line x1="21" y1="3" x2="14" y2="10"></line><line x1="3" y1="21" x2="10" y2="14"></line></svg>
+                        </button>
+                    </div>
                     <textarea id="prod-notes" class="auto-expand" placeholder="Enter product notes..." oninput="autoResize(this)"></textarea>
                 </div>
             </div>
@@ -554,6 +640,17 @@
                 <button class="btn btn-primary" onclick="saveProduct()">Save Product</button>
             </div>
         </div>
+    </div>
+
+    <!-- Notes Maximized Overlay -->
+    <div id="notes-maximized-overlay" class="notes-maximized-container">
+        <div class="notes-maximized-header">
+            <h2 id="notes-maximized-title">Field Name</h2>
+            <button class="btn-svg" onclick="toggleMaximizeNotes()" title="Minimize Notes">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="4 14 10 14 10 20"></polyline><polyline points="20 10 14 10 14 4"></polyline><line x1="14" y1="10" x2="21" y2="3"></line><line x1="3" y1="21" x2="10" y2="14"></line></svg>
+            </button>
+        </div>
+        <textarea id="notes-maximized-textarea" placeholder="Enter notes..."></textarea>
     </div>
 
     <!-- Cord Combo Modal -->
@@ -766,8 +863,31 @@
         }
 
         function autoResize(textarea) {
+            if (textarea.classList.contains('maximized-notes')) return;
             textarea.style.height = 'auto';
             textarea.style.height = textarea.scrollHeight + 'px';
+        }
+
+        function toggleMaximizeNotes() {
+            const overlay = document.getElementById('notes-maximized-overlay');
+            const mainTextarea = document.getElementById('prod-notes');
+            const maxTextarea = document.getElementById('notes-maximized-textarea');
+            const title = document.getElementById('notes-maximized-title');
+            const productName = document.getElementById('prod-name').value;
+
+            if (!overlay.classList.contains('active')) {
+                // Maximize
+                maxTextarea.value = mainTextarea.value;
+                title.innerText = productName ? `Notes: ${productName}` : 'Notes';
+                overlay.classList.add('active');
+                maxTextarea.focus();
+            } else {
+                // Minimize
+                mainTextarea.value = maxTextarea.value;
+                overlay.classList.remove('active');
+                autoResize(mainTextarea);
+                mainTextarea.focus();
+            }
         }
 
         function openProductModal(id = null) {
@@ -1280,9 +1400,7 @@
                         const notesId = `notes-${cord.id}-${prod.id}`;
                         notesHtml = `
                             <div style="display: flex; align-items: baseline; gap: 5px;">
-                                <div id="${notesId}" class="notes-container">
-                                    ${prod.notes.replace(/\n/g, "<br>")}
-                                </div>
+                                <div id="${notesId}" class="notes-container">${prod.notes}</div>
                                 <span class="toggle-notes" onclick="toggleNotes('${notesId}', this)">more</span>
                             </div>
                         `;
@@ -1342,6 +1460,11 @@
         // Close modal on Escape key
         window.addEventListener('keydown', (event) => {
             if (event.key === 'Escape') {
+                const overlay = document.getElementById('notes-maximized-overlay');
+                if (overlay.classList.contains('active')) {
+                    toggleMaximizeNotes();
+                    return;
+                }
                 ['product-modal', 'cord-modal'].forEach(id => {
                     const modal = document.getElementById(id);
                     if (modal && modal.style.display === 'block') {
