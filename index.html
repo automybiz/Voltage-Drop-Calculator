@@ -258,16 +258,14 @@
 
         .product-name-cell {
             white-space: normal !important;
-            position: relative;
-            padding-right: 32px !important;
+            padding-right: 8px !important; /* Resetting padding to match others */
         }
 
         .external-link-icon {
-            position: absolute;
-            top: 12px;
-            right: 8px;
+            float: right;
+            margin-top: 2px;
+            margin-left: 10px;
             color: var(--highlight);
-            flex-shrink: 0;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -1431,15 +1429,15 @@
                     }
 
                     let prodNameCell = `
-                        <div style="text-align: left;">
-                            ${prod.url ? `<a href="${prod.url}" target="_blank" style="color:var(--highlight); text-decoration:none;">${prod.name}</a>` : prod.name}
-                            ${notesHtml}
-                        </div>
                         ${prod.url ? `
                             <a href="${prod.url}" target="_blank" class="external-link-icon" title="Open link in new tab">
                                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
                             </a>
                         ` : ""}
+                        <div style="text-align: left;">
+                            ${prod.url ? `<a href="${prod.url}" target="_blank" style="color:var(--highlight); text-decoration:none;">${prod.name}</a>` : prod.name}
+                            ${notesHtml}
+                        </div>
                     `;
 
                     row.innerHTML = `
