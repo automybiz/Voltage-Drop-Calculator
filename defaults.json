@@ -4,19 +4,21 @@
       "id": 1,
       "name": "Hisense 250 Sq. Ft. No Inverter 9 Amp",
       "amps": 9,
-      "visible": true,
+      "visible": false,
       "watts": 1080,
       "url": "https://www.lowes.com/pd/Hisense-7000-BTU-DOE-115-Volt-White-Vented-Wi-Fi-enabled-Portable-Air-Conditioner-with-Remote-Cools-299-sq-ft/5005337835",
-      "notes": "When the compressor is actively running in Cool Mode, the unit will pull a constant maximum wattage. Because it lacks an inverter, the compressor operates at a fixed speed, cycling entirely on and off instead of adjusting its cooling capacity.\n\nOther things that suck:\n\t- Cool Mode: There's no low or medium. It always runs on high.\n\t- Cool Mode isn't consistent on a 200 ft 10 Gauge + 25 ft 12 Gauge cord.\n\t\t- Sometimes it spontaneously shuts off. Daily highs are nearly 100F.\n\t\t- It's probably just gonna get worse when Phoenix AZ summer heat ramps up to 115F.\n\t- It only cools the area right in front of it. Won't cool my whole RV.\n\t- My RV has only 2 inch thick walls so summer heat bakes through quite easily.\n\t\t- In this scenario it would be much better to be able to cool DOUBLE the required Square Footage.\n\t- This is quite literally a bottom of the barrel portable AC unit which only cools \"250 Sq. Ft.\"."
+      "notes": "When the compressor is actively running in Cool Mode, the unit will pull a constant maximum wattage. Because it lacks an inverter, the compressor operates at a fixed speed, cycling entirely on and off instead of adjusting its cooling capacity.\n\nOther things that suck:\n\t- Cool Mode: There's no low or medium. It always runs on high.\n\t- Cool Mode isn't consistent on a 200 ft 10 Gauge + 25 ft 12 Gauge cord.\n\t\t- Sometimes it spontaneously shuts off. Daily highs are nearly 100F.\n\t\t- It's probably just gonna get worse when Phoenix AZ summer heat ramps up to 115F.\n\t- It only cools the area right in front of it. Won't cool my whole RV.\n\t- My RV has only 2 inch thick walls so summer heat bakes through quite easily.\n\t\t- In this scenario it would be much better to be able to cool DOUBLE the required Square Footage.\n\t- This is quite literally a bottom of the barrel portable AC unit which only cools \"250 Sq. Ft.\".\n\t- This unit is LOUD! I think it's louder than what's it's rated for because it's not new anymore.\n\t\t- I don't know how old it is because I inherited this unit.\n\t\t- Aside from the ratings it's even more annoying when it switches modes on it's own.\n\t- It only remembers the temp I set it to for a limited time only.\n\n-Brian M",
+      "db": "49"
     },
     {
       "id": 2,
       "name": "Midea Duo 450 Sq. Ft. With Inverter 10.5 Amp On High",
       "amps": 10.5,
-      "visible": false,
+      "visible": true,
       "watts": 1260,
       "url": "https://www.amazon.com/Midea-Efficiency-Conditioner-Compatible-Assistant/dp/B0GV3XFJPX",
-      "notes": "The Midea Duo’s inverter compressor dynamically adjusts its power draw to match your cooling needs. Setting it to low, medium, or high directly changes both the wattage and amperage. Cool Mode: Can run on Low, Medium, or High. Fan Mode: Can also run on Low, Medium, or High (independent of the compressor).\n\nCool Mode Consumption:\nHigh: 1,100 ~> 1,200 W, 9.2 ~> 10.5 A\nMedium: 600 ~> 800 W, 5.0 ~> 6.7 A\nLow: 250 ~> 450 W, 2.1 ~> 3.8 A"
+      "notes": "The Midea Duo’s inverter compressor dynamically adjusts its power draw to match your cooling needs. Setting it to low, medium, or high directly changes both the wattage and amperage. Cool Mode: Can run on Low, Medium, or High. Fan Mode: Can also run on Low, Medium, or High (independent of the compressor).\n\nCool Mode Consumption:\n\tHigh: 1,100 ~> 1,200 W, 9.2 ~> 10.5 A\n\tMedium: 600 ~> 800 W, 5.0 ~> 6.7 A\n\tLow: 250 ~> 450 W, 2.1 ~> 3.8 A\n\n-Brian M",
+      "db": "56"
     },
     {
       "id": 1779618072224,
@@ -24,8 +26,9 @@
       "amps": 6.7,
       "watts": 804,
       "url": "https://www.amazon.com/Midea-Efficiency-Conditioner-Compatible-Assistant/dp/B0GV3XFJPX",
-      "notes": "The Midea Duo’s inverter compressor dynamically adjusts its power draw to match your cooling needs. Setting it to low, medium, or high directly changes both the wattage and amperage. Cool Mode: Can run on Low, Medium, or High. Fan Mode: Can also run on Low, Medium, or High (independent of the compressor).\n\nCool Mode Consumption:\nHigh: 1,100 ~> 1,200 W, 9.2 ~> 10.5 A\nMedium: 600 ~> 800 W, 5.0 ~> 6.7 A\nLow: 250 ~> 450 W, 2.1 ~> 3.8 A",
-      "visible": false
+      "notes": "The Midea Duo’s inverter compressor dynamically adjusts its power draw to match your cooling needs. Setting it to low, medium, or high directly changes both the wattage and amperage. Cool Mode: Can run on Low, Medium, or High. Fan Mode: Can also run on Low, Medium, or High (independent of the compressor).\n\nCool Mode Consumption:\n\tHigh: 1,100 ~> 1,200 W, 9.2 ~> 10.5 A\n\tMedium: 600 ~> 800 W, 5.0 ~> 6.7 A\n\tLow: 250 ~> 450 W, 2.1 ~> 3.8 A\n\n-Brian M",
+      "visible": false,
+      "db": "48"
     },
     {
       "id": 1779618168928,
@@ -33,8 +36,9 @@
       "amps": 3.8,
       "watts": 456,
       "url": "https://www.amazon.com/Midea-Efficiency-Conditioner-Compatible-Assistant/dp/B0GV3XFJPX",
-      "notes": "The Midea Duo’s inverter compressor dynamically adjusts its power draw to match your cooling needs. Setting it to low, medium, or high directly changes both the wattage and amperage. Cool Mode: Can run on Low, Medium, or High. Fan Mode: Can also run on Low, Medium, or High (independent of the compressor).\n\nCool Mode Consumption:\nHigh: 1,100 ~> 1,200 W, 9.2 ~> 10.5 A\nMedium: 600 ~> 800 W, 5.0 ~> 6.7 A\nLow: 250 ~> 450 W, 2.1 ~> 3.8 A",
-      "visible": false
+      "notes": "The Midea Duo’s inverter compressor dynamically adjusts its power draw to match your cooling needs. Setting it to low, medium, or high directly changes both the wattage and amperage. Cool Mode: Can run on Low, Medium, or High. Fan Mode: Can also run on Low, Medium, or High (independent of the compressor).\n\nCool Mode Consumption:\n\tHigh: 1,100 ~> 1,200 W, 9.2 ~> 10.5 A\n\tMedium: 600 ~> 800 W, 5.0 ~> 6.7 A\n\tLow: 250 ~> 450 W, 2.1 ~> 3.8 A\n\n-Brian M",
+      "visible": false,
+      "db": "47"
     },
     {
       "id": 3,
@@ -43,7 +47,8 @@
       "visible": false,
       "watts": 1356,
       "url": "https://www.amazon.com/Midea-Efficiency-Conditioner-Compatible-Assistant/dp/B0FC2SGGF9",
-      "notes": ""
+      "notes": "",
+      "db": "57"
     },
     {
       "id": 1779533104454,
@@ -132,5 +137,5 @@
   "sourceVoltage": 120,
   "outletAmperage": 15,
   "version": "1.0",
-  "exportDate": "2026-05-25T10:31:48.202Z"
+  "exportDate": "2026-05-25T12:24:01.839Z"
 }

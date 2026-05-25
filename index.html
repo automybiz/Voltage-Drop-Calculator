@@ -357,12 +357,12 @@
 
         .modal-form-grid {
             display: grid;
-            grid-template-columns: 1fr 1fr;
+            grid-template-columns: repeat(3, 1fr);
             gap: 20px;
             margin-top: 20px;
         }
 
-        .full-width { grid-column: span 2; }
+        .full-width { grid-column: span 3; }
 
         .form-group {
             display: flex;
@@ -542,7 +542,7 @@
 <body style="margin: 0; padding: 0;">
 
     <div class="container">
-        <h1>⚡ Voltage Drop Calculator</h1>
+        <h1>⚡ Voltage Drop Calculator ⚡</h1>
 
         <!-- Settings Accordion -->
         <div class="accordion-container">
@@ -605,6 +605,7 @@
                 <tr>
                     <th>Cord Combos</th>
                     <th>Electrical Product</th>
+                    <th>DB</th>
                     <th>Watts</th>
                     <th>Amps</th>
                     <th>Voltage Drop %</th>
@@ -617,6 +618,25 @@
                 <!-- Rows injected by JS -->
             </tbody>
         </table>
+
+        <!-- Additional Info Accordion -->
+        <div class="accordion-container" style="margin-top: 20px;">
+            <div class="accordion-header" onclick="toggleAccordion('additional-info-content', 'additional-info-arrow')">
+                <h3>Additional Info</h3>
+                <span id="additional-info-arrow">▼</span>
+            </div>
+            <div id="additional-info-content" class="accordion-content closed">
+The main purpose in mind when creating this voltage drop calculator was to achieve<br>
+the following 2 end goals while only making a single run with an extension cord combo:<br><br>
+
+&nbsp;&nbsp;&nbsp;&nbsp;<b>Goal #1:</b> To most efficiently manage life support in an RV (Fridge/Freezer/AC).<br><br>
+
+&nbsp;&nbsp;&nbsp;&nbsp;<b>Goal #2:</b> To add a business computer and 50 inch flat screen on top of life support.<br><br>
+
+The default Visible Midea Duo AC unit was chosen to start the calculator with because it hits the biggest bang for buck sweet spot in terms of power draw and cooling for my specific RV setup. It's a 10k BTU SACC unit that can cool up to 450 sq ft, which is more than enough for my RV. It also has an inverter compressor which allows it to adjust its power draw based on the cooling demand, making it more efficient and quieter compared to non-inverter units. The Midea Duo's ability to run in both Cool Mode and Fan Mode at different power levels provides flexibility in managing power consumption while still maintaining comfort. It also has a dual hose design which helps in efficient heat dissipation and eliminates a negative air pressure environment. Negative air pressure environments suck in hot air from outside which defeats the purpose of having an effective cooling system. Starting with this unit allows me to see how much watts/amps capacity I have left for additional products like the computer and flat screen, and helps me make informed decisions about cord combinations and potential upgrades in the future.
+
+            </div>
+        </div>
     </div>
 
     <!-- Product Modal -->
@@ -630,12 +650,16 @@
                     <input type="text" id="prod-name" placeholder="e.g. Midea Duo 14k">
                 </div>
                 <div class="form-group">
+                    <label>Watts (W)</label>
+                    <input type="number" id="prod-watts" step="1" oninput="syncAmpsWatts('watts')">
+                </div>
+                <div class="form-group">
                     <label>Amps (A)</label>
                     <input type="number" id="prod-amps" step="0.1" oninput="syncAmpsWatts('amps')">
                 </div>
                 <div class="form-group">
-                    <label>Watts (W)</label>
-                    <input type="number" id="prod-watts" step="1" oninput="syncAmpsWatts('watts')">
+                    <label>DB (Decibels)</label>
+                    <input type="number" id="prod-db" step="1" placeholder="e.g. 52">
                 </div>
                 <div class="form-group full-width">
                     <label>Product URL</label>
@@ -712,6 +736,7 @@
             {
                 "id": 1,
                 "name": "Hisense 250 Sq. Ft. No Inverter 9 Amp",
+                "db": 52,
                 "amps": 9,
                 "visible": false,
                 "watts": 1080,
@@ -721,6 +746,7 @@
             {
                 "id": 2,
                 "name": "Midea Duo 450 Sq. Ft. With Inverter 10.5 Amp On High",
+                "db": 52,
                 "amps": 10.5,
                 "visible": true,
                 "watts": 1260,
@@ -730,6 +756,7 @@
             {
                 "id": 1779618072224,
                 "name": "Midea Duo 450 Sq. Ft. With Inverter 6.7 Amp On Medium",
+                "db": 47,
                 "amps": 6.7,
                 "watts": 804,
                 "url": "https://www.amazon.com/Midea-Efficiency-Conditioner-Compatible-Assistant/dp/B0GV3XFJPX",
@@ -739,6 +766,7 @@
             {
                 "id": 1779618168928,
                 "name": "Midea Duo 450 Sq. Ft. With Inverter 3.8 Amp On Low",
+                "db": 42,
                 "amps": 3.8,
                 "watts": 456,
                 "url": "https://www.amazon.com/Midea-Efficiency-Conditioner-Compatible-Assistant/dp/B0GV3XFJPX",
@@ -748,6 +776,7 @@
             {
                 "id": 3,
                 "name": "Midea Duo 550 Sq. Ft. With Inverter 11.3 Amp On High",
+                "db": 52,
                 "amps": 11.3,
                 "visible": false,
                 "watts": 1356,
@@ -757,6 +786,7 @@
             {
                 "id": 1779533104454,
                 "name": "Computer 12600K 6800 XT, 50\" Screen",
+                "db": 45,
                 "amps": 2.5,
                 "visible": true,
                 "watts": 300,
@@ -766,6 +796,7 @@
             {
                 "id": 1779535362238,
                 "name": "Fridge/Freezer Combo 200W 1998 Sun Chaser ",
+                "db": 45,
                 "amps": 1.67,
                 "watts": 200,
                 "visible": true,
@@ -862,9 +893,9 @@
         }
 
         // UI Handlers
-        function toggleAccordion() {
-            const content = document.getElementById('settings-content');
-            const arrow = document.getElementById('accordion-arrow');
+        function toggleAccordion(contentId = 'settings-content', arrowId = 'accordion-arrow') {
+            const content = document.getElementById(contentId);
+            const arrow = document.getElementById(arrowId);
             content.classList.toggle('closed');
             arrow.innerText = content.classList.contains('closed') ? '▼' : '▲';
         }
@@ -921,6 +952,7 @@
             if (id) {
                 const p = products.find(x => x.id === id);
                 document.getElementById('prod-name').value = p.name;
+                document.getElementById('prod-db').value = p.db || '';
                 document.getElementById('prod-amps').value = p.amps;
                 document.getElementById('prod-url').value = p.url || '';
                 notesField.value = p.notes || '';
@@ -930,6 +962,7 @@
                 editingId = id;
             } else {
                 document.getElementById('prod-name').value = '';
+                document.getElementById('prod-db').value = '';
                 document.getElementById('prod-amps').value = '';
                 document.getElementById('prod-watts').value = '';
                 document.getElementById('prod-url').value = '';
@@ -1047,6 +1080,7 @@
 
         function saveProduct() {
             const name = document.getElementById('prod-name').value;
+            const db = document.getElementById('prod-db').value;
             const amps = parseFloat(document.getElementById('prod-amps').value);
             const watts = parseInt(document.getElementById('prod-watts').value);
             const url = document.getElementById('prod-url').value;
@@ -1057,12 +1091,13 @@
             if (editingId) {
                 const p = products.find(x => x.id === editingId);
                 p.name = name;
+                p.db = db;
                 p.amps = amps;
                 p.watts = watts;
                 p.url = url;
                 p.notes = notes;
             } else {
-                products.push({ id: Date.now(), name, amps, watts, url, notes, visible: true });
+                products.push({ id: Date.now(), name, db, amps, watts, url, notes, visible: true });
             }
             
             saveToStorage();
@@ -1368,7 +1403,7 @@
             const visibleCords = cordCombos.filter(c => c.visible);
 
             if (visibleProducts.length === 0 || visibleCords.length === 0) {
-                body.innerHTML = `<tr><td colspan="8">No ${visibleProducts.length === 0 ? 'products' : 'cord combos'} enabled.</td></tr>`;
+                body.innerHTML = `<tr><td colspan="9">No ${visibleProducts.length === 0 ? 'products' : 'cord combos'} enabled.</td></tr>`;
                 return;
             }
 
@@ -1443,6 +1478,7 @@
                     row.innerHTML = `
                         ${cordCell}
                         <td class="product-name-cell">${prodNameCell}</td>
+                        <td>${prod.db || ''}</td>
                         <td>${prod.watts || Math.round(prod.amps * vSource)}W</td>
                         <td>${prod.amps}A</td>
                         <td class="${safety.class}">${calc.dropPercent}% Drop</td>
