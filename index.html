@@ -17,7 +17,7 @@
             <thead>
                 <tr>
                     <th>Cord Combos</th>
-                    <th>Electrical Product</th>
+                    <th id="header-products">Electrical Product</th>
                     <th>DB</th>
                     <th>Watts</th>
                     <th>Amps</th>
@@ -863,6 +863,8 @@ The default Visible Midea Duo AC unit was chosen to start the calculator with be
 
         function renderTable() {
             const table = document.getElementById('results-table');
+            const visibleProductsCount = products.filter(p => p.visible).length;
+            document.getElementById('header-products').innerText = `ELECTRICAL PRODUCTS (${visibleProductsCount})`;
             // Remove all existing tbody elements
             const oldBodies = table.querySelectorAll('tbody');
             oldBodies.forEach(b => b.remove());
