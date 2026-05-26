@@ -1078,7 +1078,7 @@ The default Visible Midea Duo AC unit was chosen to start the calculator with be
                     let availableCell = '';
                     if (index === 0) {
                         const pencilColor = cord.notes ? 'var(--highlight)' : '#777';
-                        const tooltipText = cord.notes ? cord.notes.replace(/"/g, '"') : 'No notes available';
+                        const tooltipText = cord.notes ? cord.notes.replace(/"/g, '"') : 'No notes defined';
 
                         cordCell = `
                             <td rowspan="${visibleProducts.length}" class="cord-setup-cell" onclick="openCordModal(${cord.id})" style="cursor:pointer; border-right: 1px solid #044; position: relative; padding-bottom: 20px;">
