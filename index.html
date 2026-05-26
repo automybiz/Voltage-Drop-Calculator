@@ -148,7 +148,7 @@ The default Visible Midea Duo AC unit was chosen to start the calculator with be
             <div class="modal-form-grid">
                 <div class="form-group full-width">
                     <label>Product Name</label>
-                    <input type="text" id="prod-name" placeholder="e.g. Midea Duo 14k">
+                    <input type="text" id="prod-name" placeholder="e.g. Midea Duo 14k" oninput="updateFindButtonsState()">
                 </div>
                 <div class="form-group">
                     <label>Watts (W)</label>
@@ -159,12 +159,18 @@ The default Visible Midea Duo AC unit was chosen to start the calculator with be
                     <input type="number" id="prod-amps" step="0.1" oninput="syncAmpsWatts('amps')">
                 </div>
                 <div class="form-group">
-                    <label>Voltage Min</label>
-                    <input type="number" id="prod-min-voltage" step="0.1" placeholder="e.g. 100">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <label>DB (Decibels)</label>
+                        <button class="btn" id="btn-find-db" style="padding: 2px 6px; font-size: 0.7em;" onclick="findProductDB()" title="Find Product Decibles">Find</button>
+                    </div>
+                    <input type="number" id="prod-db" step="1" placeholder="e.g. 52">
                 </div>
                 <div class="form-group">
-                    <label>DB (Decibels)</label>
-                    <input type="number" id="prod-db" step="1" placeholder="e.g. 52">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <label>Voltage Min</label>
+                        <button class="btn" id="btn-find-voltage" style="padding: 2px 6px; font-size: 0.7em;" onclick="findMinVoltage()" title="Find Minimum Product Voltage">Find</button>
+                    </div>
+                    <input type="number" id="prod-min-voltage" step="0.1" placeholder="e.g. 100">
                 </div>
                 <div class="form-group full-width">
                     <label>Product URL</label>
@@ -223,6 +229,12 @@ The default Visible Midea Duo AC unit was chosen to start the calculator with be
                         <!-- Segments added here -->
                     </div>
                     <button class="btn" style="margin-top:10px;" onclick="addSegment()">+ Add Segment</button>
+                </div>
+                <div class="form-group full-width">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <label>Notes</label>
+                    </div>
+                    <textarea id="cord-notes" class="auto-expand" placeholder="Enter cord notes..." oninput="autoResize(this)"></textarea>
                 </div>
             </div>
             <div class="modal-footer">
@@ -511,6 +523,18 @@ The default Visible Midea Duo AC unit was chosen to start the calculator with be
             }
         }
 
+        function updateFindButtonsState() {
+            const nameInput = document.getElementById('prod-name');
+            const btnDb = document.getElementById('btn-find-db');
+            const btnVolt = document.getElementById('btn-find-voltage');
+            
+            if (nameInput && btnDb && btnVolt) {
+                const isDisabled = nameInput.value.trim() === '';
+                btnDb.disabled = isDisabled;
+                btnVolt.disabled = isDisabled;
+            }
+        }
+
         function openProductModal(id = null) {
             const modal = document.getElementById('product-modal');
             const title = document.getElementById('product-modal-title');
@@ -542,6 +566,7 @@ The default Visible Midea Duo AC unit was chosen to start the calculator with be
             }
             modal.style.display = 'block';
             autoResize(notesField);
+            updateFindButtonsState();
         }
 
         function openCordModal(id = null) {
@@ -549,23 +574,27 @@ The default Visible Midea Duo AC unit was chosen to start the calculator with be
             const title = document.getElementById('cord-modal-title');
             const deleteBtn = document.getElementById('btn-delete-cord');
             const list = document.getElementById('segment-list');
+            const notesField = document.getElementById('cord-notes');
             list.innerHTML = '';
 
             if (id) {
                 const c = cordCombos.find(x => x.id === id);
                 document.getElementById('cord-name').value = c.name;
+                notesField.value = c.notes || '';
                 c.segments.forEach(seg => addSegment(seg.length, seg.awg));
                 title.innerText = 'Edit Cord Combo';
                 deleteBtn.style.display = 'block';
                 editingId = id;
             } else {
                 document.getElementById('cord-name').value = '';
+                notesField.value = '';
                 addSegment(50, 12);
                 title.innerText = 'Add Cord Combination';
                 deleteBtn.style.display = 'none';
             }
             document.getElementById('btn-revert-name').disabled = true;
             modal.style.display = 'block';
+            autoResize(notesField);
         }
 
         function generateCordName() {
@@ -679,6 +708,7 @@ The default Visible Midea Duo AC unit was chosen to start the calculator with be
 
         function saveCord() {
             const name = document.getElementById('cord-name').value;
+            const notes = document.getElementById('cord-notes').value;
             const segElements = document.querySelectorAll('.segment-item');
             const segments = [];
             
@@ -693,9 +723,10 @@ The default Visible Midea Duo AC unit was chosen to start the calculator with be
             if (editingId) {
                 const c = cordCombos.find(x => x.id === editingId);
                 c.name = name;
+                c.notes = notes;
                 c.segments = segments;
             } else {
-                cordCombos.push({ id: Date.now(), name, segments, visible: true });
+                cordCombos.push({ id: Date.now(), name, segments, notes, visible: true });
             }
 
             saveToStorage();
@@ -902,6 +933,26 @@ The default Visible Midea Duo AC unit was chosen to start the calculator with be
             }
         }
 
+        function findMinVoltage() {
+            const name = document.getElementById('prod-name').value;
+            if (name) {
+                const query = encodeURIComponent(`${name}. What is the Minimum Required Voltage?`);
+                window.open(`https://www.google.com/search?q=${query}`, "_blank");
+            } else {
+                alert("Please enter a Product Name first.");
+            }
+        }
+
+        function findProductDB() {
+            const name = document.getElementById('prod-name').value;
+            if (name) {
+                const query = encodeURIComponent(`${name}. What are the Decibels?`);
+                window.open(`https://www.google.com/search?q=${query}`, "_blank");
+            } else {
+                alert("Please enter a Product Name first.");
+            }
+        }
+
         function handleImport(event) {
             const file = event.target.files[0];
             if (!file) return;
@@ -1011,22 +1062,26 @@ The default Visible Midea Duo AC unit was chosen to start the calculator with be
                 const groupBody = document.createElement('tbody');
                 groupBody.className = 'results-group';
 
+                const totalCalc = calculateVoltageDrop(totalVisibleAmps, cord.segments);
+                const remainingVoltage = vSource - totalCalc.totalDropV;
+
                 visibleProducts.forEach((prod, index) => {
                     const row = document.createElement('tr');
                     const calc = calculateVoltageDrop(prod.amps, cord.segments);
                     const safety = getSafetyResult(calc.dropPercent);
 
-                    const voltageAtProduct = vSource - calc.totalDropV;
-                    const isVoltageTooLow = prod.minVoltage && voltageAtProduct < prod.minVoltage;
+                    const isVoltageTooLow = prod.minVoltage && remainingVoltage < prod.minVoltage;
 
                     let cordCell = '';
                     let totalSourceCell = '';
                     let totalLoadCell = '';
                     let availableCell = '';
                     if (index === 0) {
-                        const totalCalc = calculateVoltageDrop(totalVisibleAmps, cord.segments);
+                        const pencilColor = cord.notes ? 'var(--highlight)' : '#777';
+                        const tooltipText = cord.notes ? cord.notes.replace(/"/g, '"') : 'No notes available';
+
                         cordCell = `
-                            <td rowspan="${visibleProducts.length}" class="cord-setup-cell" onclick="openCordModal(${cord.id})" style="cursor:pointer; border-right: 1px solid #044;">
+                            <td rowspan="${visibleProducts.length}" class="cord-setup-cell" onclick="openCordModal(${cord.id})" style="cursor:pointer; border-right: 1px solid #044; position: relative; padding-bottom: 20px;">
                                 <span class="total-length">Total Length: ${totalCalc.totalLength} ft</span>
                                 <div style="margin: 8px 0;">${cord.name.replace(/\+/g, '+<br>')}</div>
                                 <div style="margin-top: 8px;">
@@ -1034,6 +1089,10 @@ The default Visible Midea Duo AC unit was chosen to start the calculator with be
                                     <span class="total-length" style="color: var(--safety-warning);">Connection Points: ${totalCalc.numConnections}</span>
                                 </div>
                                 <div style="font-size:0.7em; color:var(--highlight); margin-top:5px;">[ Click to Edit ]</div>
+                                <div class="custom-tooltip" style="position: absolute; bottom: 5px; right: 5px; color: ${pencilColor};" onclick="event.stopPropagation();">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"></path><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg>
+                                    <span class="custom-tooltip-text">${tooltipText}</span>
+                                </div>
                             </td>
                         `;
                         totalSourceCell = `
@@ -1044,18 +1103,18 @@ The default Visible Midea Duo AC unit was chosen to start the calculator with be
                             </td>
                         `;
                         totalLoadCell = `
-                            <td rowspan="${visibleProducts.length}" style="font-weight:bold; color:var(--highlight); border-right: 1px solid #044;">
+                            <td rowspan="${visibleProducts.length}" style="font-weight:bold; border-right: 1px solid #044;">
                                 <div>-${totalVisibleWatts}W</div>
                                 <div style="font-size:0.9em; color:#fff;">-${totalVisibleAmps.toFixed(1)}A</div>
                                 <div style="font-size:0.8em; color:var(--safety-warning); margin-top:4px;">-${totalCalc.totalDropV}V</div>
                             </td>
                         `;
-                        const remainingVoltage = (vSource - totalCalc.totalDropV).toFixed(2);
+                        const remainingVoltageStr = remainingVoltage.toFixed(2);
                         availableCell = `
                             <td rowspan="${visibleProducts.length}" style="font-weight:bold; border-right: none;">
                                 <div style="color:var(--highlight);">${remainingWatts.toFixed(0)}W</div>
                                 <div style="font-size:0.9em; color:#fff;">${remainingAmps.toFixed(1)}A</div>
-                                <div style="font-size:0.9em; margin-top:4px; color:${isOverloaded ? 'var(--safety-danger)' : 'var(--capacity-ok)'};">${remainingVoltage}V</div>
+                                <div style="font-size:0.9em; margin-top:4px; color:${isOverloaded ? 'var(--safety-danger)' : 'var(--capacity-ok)'};">${remainingVoltageStr}V</div>
                                 ${isOverloaded ? `<div style="font-size:0.7em; margin-top:5px; color:var(--safety-danger);">OVERLOAD</div>` : ''}
                             </td>
                         `;

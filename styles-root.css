@@ -33,6 +33,11 @@
     --input-border-color: #0FF;
     --input-placeholder-text-color: #999;
 
+    /* Tool Tip Variables */
+    --tooltip-bg-color: #011;
+    --tooltip-text-color: #FFF;
+    --tooltip-border-color: #0FF;
+
     /* Safety Result Colors */
     --safety-excellent: #4AF;
     --safety-safe: #4F4;
