@@ -21,10 +21,12 @@
                     <th>DB</th>
                     <th>Watts</th>
                     <th>Amps</th>
-                    <th>Voltage Drop %</th>
+                    <th>Voltage Min</th>
+                    <th>Voltage Drop</th>
                     <th>Safety Result</th>
+                    <th>Total Source</th>
                     <th>Total Load</th>
-                    <th>Available Capacity</th>
+                    <th>Available</th>
                 </tr>
             </thead>
             <!-- Rows injected by JS using multiple tbody elements -->
@@ -36,7 +38,7 @@
                 <h3>Default Global Settings</h3>
                 <span id="accordion-arrow">▲</span>
             </div>
-            <div id="settings-content" class="accordion-content">
+            <div id="settings-content" class="accordion-content closed">
                 <div class="import-export-container">
                     <button class="btn btn-edit" onclick="loadDefaultData()">Load Default Data</button>
                     <button class="btn btn-edit" onclick="exportData()">Export Data</button>
@@ -112,6 +114,9 @@
                     <li><b>Power Loss:</b> At a 15 Amp load, a 0.2V drop means approximately <b>3 Watts</b> of energy is lost as heat at that specific plug junction.</li>
                 </ul>
                 <p>To minimize this, ensure all connections are tight and try to use the fewest number of cord segments possible. Loose connections significantly increase this loss and can become fire hazards.</p>
+                <p><b>Source Voltage Considerations:</b></p>
+                <p>While 120V is the standard, the actual voltage at your outlet can vary depending on your location, the time of day, and the overall load on the local grid. It is not uncommon to see readings as low as 110V or as high as 125V.</p>
+                <p>To get the most accurate results from this calculator, you should measure the voltage directly from your source outlet using a multimeter or a plug-in voltage meter. Once you have an accurate reading, enter that number into the <b>Source Voltage (V)</b> field found in the <b>Default Global Settings</b> panel above. This ensures all calculations for voltage drop and available capacity are based on your specific real-world conditions.</p>
             </div>
         </div>
 
@@ -152,6 +157,10 @@ The default Visible Midea Duo AC unit was chosen to start the calculator with be
                 <div class="form-group">
                     <label>Amps (A)</label>
                     <input type="number" id="prod-amps" step="0.1" oninput="syncAmpsWatts('amps')">
+                </div>
+                <div class="form-group">
+                    <label>Voltage Min</label>
+                    <input type="number" id="prod-min-voltage" step="0.1" placeholder="e.g. 100">
                 </div>
                 <div class="form-group">
                     <label>DB (Decibels)</label>
@@ -237,7 +246,8 @@ The default Visible Midea Duo AC unit was chosen to start the calculator with be
                 "visible": false,
                 "watts": 1080,
                 "url": "https://www.lowes.com/pd/Hisense-7000-BTU-DOE-115-Volt-White-Vented-Wi-Fi-enabled-Portable-Air-Conditioner-with-Remote-Cools-299-sq-ft/5005337835",
-                "notes": "When the compressor is actively running in Cool Mode, the unit will pull a constant maximum wattage. Because it lacks an inverter, the compressor operates at a fixed speed, cycling entirely on and off instead of adjusting its cooling capacity."
+                "notes": "When the compressor is actively running in Cool Mode, the unit will pull a constant maximum wattage. Because it lacks an inverter, the compressor operates at a fixed speed, cycling entirely on and off instead of adjusting its cooling capacity.",
+                "minVoltage": 103.5
             },
             {
                 "id": 2,
@@ -247,7 +257,8 @@ The default Visible Midea Duo AC unit was chosen to start the calculator with be
                 "visible": true,
                 "watts": 1260,
                 "url": "https://www.amazon.com/Midea-Efficiency-Conditioner-Compatible-Assistant/dp/B0GV3XFJPX",
-                "notes": "The Midea Duo’s inverter compressor dynamically adjusts its power draw to match your cooling needs. Setting it to low, medium, or high directly changes both the wattage and amperage. Cool Mode: Can run on Low, Medium, or High. Fan Mode: Can also run on Low, Medium, or High (independent of the compressor).\n\nCool Mode Consumption:\nHigh: 1,100 ~> 1,200 W, 9.2 ~> 10.5 A\nMedium: 600 ~> 800 W, 5.0 ~> 6.7 A\nLow: 250 ~> 450 W, 2.1 ~> 3.8 A"
+                "notes": "The Midea Duo’s inverter compressor dynamically adjusts its power draw to match your cooling needs. Setting it to low, medium, or high directly changes both the wattage and amperage. Cool Mode: Can run on Low, Medium, or High. Fan Mode: Can also run on Low, Medium, or High (independent of the compressor).\n\nCool Mode Consumption:\nHigh: 1,100 ~> 1,200 W, 9.2 ~> 10.5 A\nMedium: 600 ~> 800 W, 5.0 ~> 6.7 A\nLow: 250 ~> 450 W, 2.1 ~> 3.8 A",
+                "minVoltage": 100
             },
             {
                 "id": 1779618072224,
@@ -257,7 +268,8 @@ The default Visible Midea Duo AC unit was chosen to start the calculator with be
                 "watts": 804,
                 "url": "https://www.amazon.com/Midea-Efficiency-Conditioner-Compatible-Assistant/dp/B0GV3XFJPX",
                 "notes": "The Midea Duo’s inverter compressor dynamically adjusts its power draw to match your cooling needs. Setting it to low, medium, or high directly changes both the wattage and amperage. Cool Mode: Can run on Low, Medium, or High. Fan Mode: Can also run on Low, Medium, or High (independent of the compressor).\n\nCool Mode Consumption:\nHigh: 1,100 ~> 1,200 W, 9.2 ~> 10.5 A\nMedium: 600 ~> 800 W, 5.0 ~> 6.7 A\nLow: 250 ~> 450 W, 2.1 ~> 3.8 A",
-                "visible": false
+                "visible": false,
+                "minVoltage": 100
             },
             {
                 "id": 1779618168928,
@@ -267,7 +279,8 @@ The default Visible Midea Duo AC unit was chosen to start the calculator with be
                 "watts": 456,
                 "url": "https://www.amazon.com/Midea-Efficiency-Conditioner-Compatible-Assistant/dp/B0GV3XFJPX",
                 "notes": "The Midea Duo’s inverter compressor dynamically adjusts its power draw to match your cooling needs. Setting it to low, medium, or high directly changes both the wattage and amperage. Cool Mode: Can run on Low, Medium, or High. Fan Mode: Can also run on Low, Medium, or High (independent of the compressor).\n\nCool Mode Consumption:\nHigh: 1,100 ~> 1,200 W, 9.2 ~> 10.5 A\nMedium: 600 ~> 800 W, 5.0 ~> 6.7 A\nLow: 250 ~> 450 W, 2.1 ~> 3.8 A",
-                "visible": false
+                "visible": false,
+                "minVoltage": 100
             },
             {
                 "id": 3,
@@ -277,7 +290,8 @@ The default Visible Midea Duo AC unit was chosen to start the calculator with be
                 "visible": false,
                 "watts": 1356,
                 "url": "https://www.amazon.com/Midea-Efficiency-Conditioner-Compatible-Assistant/dp/B0FC2SGGF9",
-                "notes": ""
+                "notes": "",
+                "minVoltage": 100
             },
             {
                 "id": 1779533104454,
@@ -417,11 +431,41 @@ The default Visible Midea Duo AC unit was chosen to start the calculator with be
         }
 
         // UI Handlers
+        // UI Handlers
         function toggleAccordion(contentId = 'settings-content', arrowId = 'accordion-arrow') {
             const content = document.getElementById(contentId);
             const arrow = document.getElementById(arrowId);
             content.classList.toggle('closed');
-            arrow.innerText = content.classList.contains('closed') ? '▼' : '▲';
+            const isClosed = content.classList.contains('closed');
+            arrow.innerText = isClosed ? '▼' : '▲';
+            
+            // Save state to localStorage
+            localStorage.setItem(`accordion_${contentId}`, isClosed ? 'closed' : 'open');
+        }
+
+        function restoreAccordionStates() {
+            const accordions = [
+                { contentId: 'settings-content', arrowId: 'accordion-arrow', default: 'closed' },
+                { contentId: 'electrical-info-content', arrowId: 'electrical-info-arrow', default: 'closed' },
+                { contentId: 'additional-info-content', arrowId: 'additional-info-arrow', default: 'closed' }
+            ];
+
+            accordions.forEach(acc => {
+                const savedState = localStorage.getItem(`accordion_${acc.contentId}`);
+                const content = document.getElementById(acc.contentId);
+                const arrow = document.getElementById(acc.arrowId);
+                
+                // Use saved state if exists, otherwise use the default provided or assume closed
+                const state = savedState || acc.default || 'closed';
+
+                if (state === 'open') {
+                    content.classList.remove('closed');
+                    arrow.innerText = '▲';
+                } else {
+                    content.classList.add('closed');
+                    arrow.innerText = '▼';
+                }
+            });
         }
 
         function closeModal(id) {
@@ -478,6 +522,7 @@ The default Visible Midea Duo AC unit was chosen to start the calculator with be
                 document.getElementById('prod-name').value = p.name;
                 document.getElementById('prod-db').value = p.db || '';
                 document.getElementById('prod-amps').value = p.amps;
+                document.getElementById('prod-min-voltage').value = p.minVoltage || '';
                 document.getElementById('prod-url').value = p.url || '';
                 notesField.value = p.notes || '';
                 syncAmpsWatts('amps');
@@ -488,6 +533,7 @@ The default Visible Midea Duo AC unit was chosen to start the calculator with be
                 document.getElementById('prod-name').value = '';
                 document.getElementById('prod-db').value = '';
                 document.getElementById('prod-amps').value = '';
+                document.getElementById('prod-min-voltage').value = '';
                 document.getElementById('prod-watts').value = '';
                 document.getElementById('prod-url').value = '';
                 notesField.value = '';
@@ -606,6 +652,7 @@ The default Visible Midea Duo AC unit was chosen to start the calculator with be
             const name = document.getElementById('prod-name').value;
             const db = document.getElementById('prod-db').value;
             const amps = parseFloat(document.getElementById('prod-amps').value);
+            const minVoltage = parseFloat(document.getElementById('prod-min-voltage').value) || 0;
             const watts = parseInt(document.getElementById('prod-watts').value);
             const url = document.getElementById('prod-url').value;
             const notes = document.getElementById('prod-notes').value;
@@ -617,11 +664,12 @@ The default Visible Midea Duo AC unit was chosen to start the calculator with be
                 p.name = name;
                 p.db = db;
                 p.amps = amps;
+                p.minVoltage = minVoltage;
                 p.watts = watts;
                 p.url = url;
                 p.notes = notes;
             } else {
-                products.push({ id: Date.now(), name, db, amps, watts, url, notes, visible: true });
+                products.push({ id: Date.now(), name, db, amps, minVoltage, watts, url, notes, visible: true });
             }
             
             saveToStorage();
@@ -943,7 +991,7 @@ The default Visible Midea Duo AC unit was chosen to start the calculator with be
 
             if (visibleProducts.length === 0 || visibleCords.length === 0) {
                 const emptyBody = document.createElement('tbody');
-                emptyBody.innerHTML = `<tr><td colspan="9">No ${visibleProducts.length === 0 ? 'products' : 'cord combos'} enabled.</td></tr>`;
+                emptyBody.innerHTML = `<tr><td colspan="11">No ${visibleProducts.length === 0 ? 'products' : 'cord combos'} enabled.</td></tr>`;
                 table.appendChild(emptyBody);
                 return;
             }
@@ -968,7 +1016,11 @@ The default Visible Midea Duo AC unit was chosen to start the calculator with be
                     const calc = calculateVoltageDrop(prod.amps, cord.segments);
                     const safety = getSafetyResult(calc.dropPercent);
 
+                    const voltageAtProduct = vSource - calc.totalDropV;
+                    const isVoltageTooLow = prod.minVoltage && voltageAtProduct < prod.minVoltage;
+
                     let cordCell = '';
+                    let totalSourceCell = '';
                     let totalLoadCell = '';
                     let availableCell = '';
                     if (index === 0) {
@@ -984,18 +1036,27 @@ The default Visible Midea Duo AC unit was chosen to start the calculator with be
                                 <div style="font-size:0.7em; color:var(--highlight); margin-top:5px;">[ Click to Edit ]</div>
                             </td>
                         `;
-                        totalLoadCell = `
-                            <td rowspan="${visibleProducts.length}" style="font-weight:bold; color:var(--highlight); border-right: 1px solid #044;">
-                                <div>${totalVisibleWatts}W</div>
-                                <div style="font-size:0.9em; color:#fff;">${totalVisibleAmps.toFixed(1)}A</div>
-                                <div style="font-size:0.8em; color:var(--safety-warning); margin-top:4px;">-${totalCalc.totalDropV}V Drop</div>
+                        totalSourceCell = `
+                            <td rowspan="${visibleProducts.length}" style="font-weight:bold; border-right: 1px solid #044;">
+                                <div style="color:var(--highlight);">${outletLimitWatts.toFixed(0)}W</div>
+                                <div style="font-size:0.9em; color:#fff;">${outletLimitAmps.toFixed(1)}A</div>
+                                <div style="font-size:0.9em; color:#fff; margin-top:4px;">${vSource}V</div>
                             </td>
                         `;
+                        totalLoadCell = `
+                            <td rowspan="${visibleProducts.length}" style="font-weight:bold; color:var(--highlight); border-right: 1px solid #044;">
+                                <div>-${totalVisibleWatts}W</div>
+                                <div style="font-size:0.9em; color:#fff;">-${totalVisibleAmps.toFixed(1)}A</div>
+                                <div style="font-size:0.8em; color:var(--safety-warning); margin-top:4px;">-${totalCalc.totalDropV}V</div>
+                            </td>
+                        `;
+                        const remainingVoltage = (vSource - totalCalc.totalDropV).toFixed(2);
                         availableCell = `
-                            <td rowspan="${visibleProducts.length}" style="font-weight:bold; color:${isOverloaded ? 'var(--safety-danger)' : 'var(--capacity-ok)'};">
-                                <div>${remainingWatts.toFixed(0)}W</div>
-                                <div style="font-size:0.9em;">${remainingAmps.toFixed(1)}A</div>
-                                <div style="font-size:0.7em; margin-top:5px;">${isOverloaded ? 'OVERLOAD' : 'AVAILABLE'}</div>
+                            <td rowspan="${visibleProducts.length}" style="font-weight:bold; border-right: none;">
+                                <div style="color:var(--highlight);">${remainingWatts.toFixed(0)}W</div>
+                                <div style="font-size:0.9em; color:#fff;">${remainingAmps.toFixed(1)}A</div>
+                                <div style="font-size:0.9em; margin-top:4px; color:${isOverloaded ? 'var(--safety-danger)' : 'var(--capacity-ok)'};">${remainingVoltage}V</div>
+                                ${isOverloaded ? `<div style="font-size:0.7em; margin-top:5px; color:var(--safety-danger);">OVERLOAD</div>` : ''}
                             </td>
                         `;
                     }
@@ -1029,8 +1090,10 @@ The default Visible Midea Duo AC unit was chosen to start the calculator with be
                         <td>${prod.db || ''}</td>
                         <td>${prod.watts || Math.round(prod.amps * vSource)}W</td>
                         <td>${prod.amps}A</td>
-                        <td class="${safety.class}">${calc.dropPercent}% Drop</td>
+                        <td style="color: ${isVoltageTooLow ? 'var(--safety-danger)' : 'inherit'}">${prod.minVoltage ? prod.minVoltage + 'V' : ''}</td>
+                        <td class="${safety.class}">${calc.dropPercent}%</td>
                         <td class="${safety.class}">${safety.text}</td>
+                        ${totalSourceCell}
                         ${totalLoadCell}
                         ${availableCell}
                     `;
@@ -1094,6 +1157,7 @@ The default Visible Midea Duo AC unit was chosen to start the calculator with be
             } else {
                 await loadDefaultData(false);
             }
+            restoreAccordionStates();
         }
 
         window.onload = initializeApp;
