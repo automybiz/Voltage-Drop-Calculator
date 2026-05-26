@@ -3,9 +3,10 @@
     --text-color: #fff;
     --table-border: #0ff;
     --table-header-bg-color: #022;
-    --table-row-bg-color: #201;
-    --table-row-hover-bg-color: #401;
-    --input-bg: #111;
+            --table-row-bg-color: #201;
+            --table-row-hover-bg-color: #401;
+            --total-length-text-color: #0FF;
+            --input-bg: #111;
     --highlight: #0ff;
     
     /* Accordion Variables */

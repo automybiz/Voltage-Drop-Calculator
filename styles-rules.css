@@ -273,7 +273,7 @@ tbody:last-of-type tr:last-child td {
 
 .total-length {
     font-size: 0.85em;
-    color: #888;
+    color: var(--total-length-text-color);
     display: block;
     margin-top: 4px;
 }

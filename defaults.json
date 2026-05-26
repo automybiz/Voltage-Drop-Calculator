@@ -7,7 +7,7 @@
       "visible": false,
       "watts": 1080,
       "url": "https://www.lowes.com/pd/Hisense-7000-BTU-DOE-115-Volt-White-Vented-Wi-Fi-enabled-Portable-Air-Conditioner-with-Remote-Cools-299-sq-ft/5005337835",
-      "notes": "When the compressor is actively running in Cool Mode, the unit will pull a constant maximum wattage. Because it lacks an inverter, the compressor operates at a fixed speed, cycling entirely on and off instead of adjusting its cooling capacity.\n\nOther things that suck:\n\t- Cool Mode: There's no low or medium. It always runs on high.\n\t- Cool Mode isn't consistent on a 200 ft 10 Gauge + 25 ft 12 Gauge cord.\n\t\t- Sometimes it spontaneously shuts off. Daily highs are nearly 100F.\n\t\t- It's probably just gonna get worse when Phoenix AZ summer heat ramps up to 115F.\n\t- It only cools the area right in front of it. Won't cool my whole RV.\n\t- My RV has only 2 inch thick walls so summer heat bakes through quite easily.\n\t\t- In this scenario it would be much better to be able to cool DOUBLE the required Square Footage.\n\t- This is quite literally a bottom of the barrel portable AC unit which only cools \"250 Sq. Ft.\".\n\t- This unit is LOUD! I think it's louder than what's it's rated for because it's not new anymore.\n\t\t- I don't know how old it is because I inherited this unit.\n\t\t- Aside from the ratings it's even more annoying when it switches modes on it's own.\n\t- It only remembers the temp I set it to for a limited time only.\n\n-Brian M",
+      "notes": "When the compressor is actively running in Cool Mode, the unit will pull a constant maximum wattage. Because it lacks an inverter, the compressor operates at a fixed speed, cycling entirely on and off instead of adjusting its cooling capacity.\n\nOther things that suck:\n\t- Cool Mode: There's no low or medium. It always runs on high.\n\t- Cool Mode isn't consistent on a 100 ft 10 Gauge + 100 ft 10 Gauge + 25 ft 12 Gauge cord.\n\t\t- Sometimes it spontaneously shuts off. Daily highs are nearly 100F!\n\t\t- It's probably just gonna get worse when Phoenix AZ summer heat ramps up to 115F.\n\t- It only cools the area right in front of it. The rest of my RV is too hot where the vents are not aimed!\n\t- My RV has only 2 inch thick walls so summer heat bakes through quite easily.\n\t\t- It would be much better to have an AC unit able to cool DOUBLE the required Square Footage.\n\t- This is quite literally a bottom of the barrel portable AC unit which only cools \"250 Sq. Ft.\".\n\t- Sometimes this unit is LOUD! I think it's louder when too much voltage drop occurs.\n\t\t- I don't know how old it is because I inherited this unit. \n\t\t- Aside from the ratings it's even more annoying when it switches modes on it's own.\n\t- It only remembers the temp I set it to for a limited time only. So annoying!\n\n-Brian M",
       "db": "49"
     },
     {
@@ -72,10 +72,14 @@
   "cordCombos": [
     {
       "id": 1,
-      "name": "200 ft (10 AWG)",
+      "name": "100 ft (10 AWG) + 100 ft (10 AWG)",
       "segments": [
         {
-          "length": 200,
+          "length": 100,
+          "awg": 10
+        },
+        {
+          "length": 100,
           "awg": 10
         }
       ],
@@ -83,10 +87,14 @@
     },
     {
       "id": 3,
-      "name": "200 ft (10 AWG) + 25 ft (10 AWG)",
+      "name": "100 ft (10 AWG) + 100 ft (10 AWG) + 25 ft (10 AWG)",
       "segments": [
         {
-          "length": 200,
+          "length": 100,
+          "awg": 10
+        },
+        {
+          "length": 100,
           "awg": 10
         },
         {
@@ -98,10 +106,14 @@
     },
     {
       "id": 2,
-      "name": "200 ft (10 AWG) + 25 ft (12 AWG)",
+      "name": "100 ft (10 AWG) + 100 ft (10 AWG) + 25 ft (12 AWG)",
       "segments": [
         {
-          "length": 200,
+          "length": 100,
+          "awg": 10
+        },
+        {
+          "length": 100,
           "awg": 10
         },
         {
@@ -113,10 +125,18 @@
     },
     {
       "id": 1779533572152,
-      "name": "300 ft (10 AWG)",
+      "name": "100 ft (10 AWG) + 100 ft (10 AWG) + 100 ft (10 AWG)",
       "segments": [
         {
-          "length": 300,
+          "length": 100,
+          "awg": 10
+        },
+        {
+          "length": 100,
+          "awg": 10
+        },
+        {
+          "length": 100,
           "awg": 10
         }
       ],
@@ -124,10 +144,18 @@
     },
     {
       "id": 1779579010445,
-      "name": "300 ft (12 AWG)",
+      "name": "100 ft (12 AWG) + 100 ft (12 AWG) + 100 ft (12 AWG)",
       "segments": [
         {
-          "length": 300,
+          "length": 100,
+          "awg": 12
+        },
+        {
+          "length": 100,
+          "awg": 12
+        },
+        {
+          "length": 100,
           "awg": 12
         }
       ],
@@ -137,5 +165,5 @@
   "sourceVoltage": 120,
   "outletAmperage": 15,
   "version": "1.0",
-  "exportDate": "2026-05-25T12:24:01.839Z"
+  "exportDate": "2026-05-26T01:12:58.426Z"
 }

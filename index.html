@@ -85,6 +85,36 @@
             </div>
         </div>
 
+        <!-- Electrical Info Accordion -->
+        <div class="accordion-container" style="margin-top: 20px;">
+            <div class="accordion-header" onclick="toggleAccordion('electrical-info-content', 'electrical-info-arrow')">
+                <h3>Electrical Info</h3>
+                <span id="electrical-info-arrow">▼</span>
+            </div>
+            <div id="electrical-info-content" class="accordion-content closed">
+                <p>The vast majority of outlets in the United States are 15 Amp outlets, estimated at approximately 90% to 95% of all residential receptacles.</p>
+                <p><b>How to tell the difference:</b></p>
+                <ul>
+                    <li><b>15 Amp Outlet:</b> Features two vertical slots. Both slots are straight vertical lines.</li>
+                    <li><b>20 Amp Outlet:</b> Recognizable by a horizontal "T" slot on the neutral (wider) side. This allows it to accept both standard 15 Amp plugs and special 20 Amp plugs.</li>
+                </ul>
+                <p><b>Amperage and Wattage Limits:</b></p>
+                <p>It is important to understand that the amperage rating applies to the <b>entire duplex outlet</b> (both plug-in areas combined). At a standard 120V:</p>
+                <ul>
+                    <li><b>15 Amp Outlet:</b> Provides a maximum of <b>1,800 Watts</b> total.</li>
+                    <li><b>20 Amp Outlet:</b> Provides a maximum of <b>2,400 Watts</b> total.</li>
+                </ul>
+                <p>In many cases, this limit applies to the entire circuit, which may share power across multiple outlets in a room.</p>
+                <p><b>Connection Considerations and Power Loss:</b></p>
+                <p>When running extension cords, keep in mind that every physical connection (plug to outlet, or cord to cord) introduces additional resistance.</p>
+                <ul>
+                    <li><b>Estimated Voltage Drop:</b> Each connection point can result in a voltage drop of approximately <b>0.1V to 0.3V</b> under load.</li>
+                    <li><b>Power Loss:</b> At a 15 Amp load, a 0.2V drop means approximately <b>3 Watts</b> of energy is lost as heat at that specific plug junction.</li>
+                </ul>
+                <p>To minimize this, ensure all connections are tight and try to use the fewest number of cord segments possible. Loose connections significantly increase this loss and can become fire hazards.</p>
+            </div>
+        </div>
+
         <!-- Additional Info Accordion -->
         <div class="accordion-container" style="margin-top: 20px;">
             <div class="accordion-header" onclick="toggleAccordion('additional-info-content', 'additional-info-arrow')">
@@ -277,7 +307,11 @@ The default Visible Midea Duo AC unit was chosen to start the calculator with be
                 "name": "200 ft (10 AWG)",
                 "segments": [
                     {
-                        "length": 200,
+                        "length": 100,
+                        "awg": 10
+                    },
+                    {
+                        "length": 100,
                         "awg": 10
                     }
                 ],
@@ -288,7 +322,11 @@ The default Visible Midea Duo AC unit was chosen to start the calculator with be
                 "name": "200 ft (10 AWG) + 25 ft (10 AWG)",
                 "segments": [
                     {
-                        "length": 200,
+                        "length": 100,
+                        "awg": 10
+                    },
+                    {
+                        "length": 100,
                         "awg": 10
                     },
                     {
@@ -303,7 +341,11 @@ The default Visible Midea Duo AC unit was chosen to start the calculator with be
                 "name": "200 ft (10 AWG) + 25 ft (12 AWG)",
                 "segments": [
                     {
-                        "length": 200,
+                        "length": 100,
+                        "awg": 10
+                    },
+                    {
+                        "length": 100,
                         "awg": 10
                     },
                     {
@@ -318,7 +360,15 @@ The default Visible Midea Duo AC unit was chosen to start the calculator with be
                 "name": "300 ft (10 AWG)",
                 "segments": [
                     {
-                        "length": 300,
+                        "length": 100,
+                        "awg": 10
+                    },
+                    {
+                        "length": 100,
+                        "awg": 10
+                    },
+                    {
+                        "length": 100,
                         "awg": 10
                     }
                 ],
@@ -329,7 +379,15 @@ The default Visible Midea Duo AC unit was chosen to start the calculator with be
                 "name": "300 ft (12 AWG)",
                 "segments": [
                     {
-                        "length": 300,
+                        "length": 100,
+                        "awg": 12
+                    },
+                    {
+                        "length": 100,
+                        "awg": 12
+                    },
+                    {
+                        "length": 100,
                         "awg": 12
                     }
                 ],
@@ -661,11 +719,22 @@ The default Visible Midea Duo AC unit was chosen to start the calculator with be
                 totalLength += seg.length;
             });
 
-            const dropPercent = (totalDropV / vSource) * 100;
+            // Connection loss: 0.2V drop at 15A per connection point.
+            // Resistance per connection = 0.2 / 15 = 0.013333...
+            const numConnections = segments.length + 1;
+            const resistancePerConnection = 0.2 / 15;
+            const connectionDropV = numConnections * (amps * resistancePerConnection);
+            
+            const combinedDropV = totalDropV + connectionDropV;
+
+            const dropPercent = (combinedDropV / vSource) * 100;
             return {
                 dropPercent: dropPercent.toFixed(1),
-                totalDropV: totalDropV.toFixed(2),
-                totalLength
+                totalDropV: combinedDropV.toFixed(2),
+                cordDropV: totalDropV.toFixed(2),
+                connectionDropV: connectionDropV.toFixed(2),
+                totalLength,
+                numConnections
             };
         }
 
@@ -906,8 +975,12 @@ The default Visible Midea Duo AC unit was chosen to start the calculator with be
                         const totalCalc = calculateVoltageDrop(totalVisibleAmps, cord.segments);
                         cordCell = `
                             <td rowspan="${visibleProducts.length}" class="cord-setup-cell" onclick="openCordModal(${cord.id})" style="cursor:pointer; border-right: 1px solid #044;">
-                                <div>${cord.name.replace(/\+/g, '+<br>')}</div>
-                                <span class="total-length">Total Length: ${calc.totalLength} ft</span>
+                                <span class="total-length">Total Length: ${totalCalc.totalLength} ft</span>
+                                <div style="margin: 8px 0;">${cord.name.replace(/\+/g, '+<br>')}</div>
+                                <div style="margin-top: 8px;">
+                                    <span class="total-length" style="color: var(--safety-warning);">Connection Drop: -${totalCalc.connectionDropV}V</span>
+                                    <span class="total-length" style="color: var(--safety-warning);">Connection Points: ${totalCalc.numConnections}</span>
+                                </div>
                                 <div style="font-size:0.7em; color:var(--highlight); margin-top:5px;">[ Click to Edit ]</div>
                             </td>
                         `;
