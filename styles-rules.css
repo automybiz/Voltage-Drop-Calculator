@@ -418,7 +418,8 @@ textarea.auto-expand {
 .custom-tooltip .custom-tooltip-text {
     visibility: hidden;
     width: max-content;
-    max-width: 420px; /* Expand up to the DB column border but not past it */
+    min-width: 260px; /* Prevents early wrapping on narrow parent containers */
+    max-width: 380px; /* Expand up to the DB column border but never past it */
     background-color: var(--tooltip-bg-color, #011);
     color: var(--tooltip-text-color, #FFF);
     border: 1px solid var(--tooltip-border-color, #0FF);
