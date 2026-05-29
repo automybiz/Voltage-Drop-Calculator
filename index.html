@@ -163,7 +163,7 @@ The default Visible Midea Duo AC unit was chosen to start the calculator with be
                         <label>DB (Decibels)</label>
                         <button class="btn" id="btn-find-db" style="padding: 2px 6px; font-size: 0.7em;" onclick="findProductDB()" title="Find Product Decibles">Find</button>
                     </div>
-                    <input type="number" id="prod-db" step="1" placeholder="e.g. 52">
+                    <input type="text" id="prod-db" placeholder="e.g. 56H, 49M, 43L">
                 </div>
                 <div class="form-group">
                     <div style="display: flex; justify-content: space-between; align-items: center;">
@@ -1098,23 +1098,23 @@ The default Visible Midea Duo AC unit was chosen to start the calculator with be
                         totalSourceCell = `
                             <td rowspan="${visibleProducts.length}" style="font-weight:bold; border-right: 1px solid #044;">
                                 <div style="color:var(--highlight);">${outletLimitWatts.toFixed(0)}W</div>
-                                <div style="font-size:0.9em; color:#fff;">${outletLimitAmps.toFixed(1)}A</div>
-                                <div style="font-size:0.9em; color:#fff; margin-top:4px;">${vSource}V</div>
+                                <div style="color:#fff;">${outletLimitAmps.toFixed(1)}A</div>
+                                <div style="color:#fff; margin-top:4px;">${vSource}V</div>
                             </td>
                         `;
                         totalLoadCell = `
                             <td rowspan="${visibleProducts.length}" style="font-weight:bold; border-right: 1px solid #044;">
                                 <div>-${totalVisibleWatts}W</div>
-                                <div style="font-size:0.9em; color:#fff;">-${totalVisibleAmps.toFixed(1)}A</div>
-                                <div style="font-size:0.8em; color:var(--safety-warning); margin-top:4px;">-${totalCalc.totalDropV}V</div>
+                                <div style="color:#fff;">-${totalVisibleAmps.toFixed(1)}A</div>
+                                <div style="color:var(--safety-warning); margin-top:4px;">-${totalCalc.totalDropV}V</div>
                             </td>
                         `;
                         const remainingVoltageStr = remainingVoltage.toFixed(2);
                         availableCell = `
                             <td rowspan="${visibleProducts.length}" style="font-weight:bold; border-right: none;">
                                 <div style="color:var(--highlight);">${remainingWatts.toFixed(0)}W</div>
-                                <div style="font-size:0.9em; color:#fff;">${remainingAmps.toFixed(1)}A</div>
-                                <div style="font-size:0.9em; margin-top:4px; color:${isOverloaded ? 'var(--safety-danger)' : 'var(--capacity-ok)'};">${remainingVoltageStr}V</div>
+                                <div style="color:#fff;">${remainingAmps.toFixed(1)}A</div>
+                                <div style="margin-top:4px; color:${isOverloaded ? 'var(--safety-danger)' : 'var(--capacity-ok)'};">${remainingVoltageStr}V</div>
                                 ${isOverloaded ? `<div style="font-size:0.7em; margin-top:5px; color:var(--safety-danger);">OVERLOAD</div>` : ''}
                             </td>
                         `;
